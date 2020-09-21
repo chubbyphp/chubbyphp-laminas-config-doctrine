@@ -42,7 +42,10 @@ final class ConnectionCommand extends Command
         $this->setHelp($this->command->getHelp());
         $this->setDefinition($this->command->getDefinition());
 
-        $this->addOption('connection', null, InputOption::VALUE_OPTIONAL, 'The connection to use for this command');
+        // dbal > 2.11
+        if (!$this->getDefinition()->hasOption('connection')) {
+            $this->addOption('connection', null, InputOption::VALUE_OPTIONAL, 'The connection to use for this command');
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
