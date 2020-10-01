@@ -34,6 +34,7 @@
         "doctrine/orm": "^2.7.3",
         "infection/infection": "^0.15.3|^0.16.2",
         "mavimo/phpstan-junit": "^0.3",
+        "mongodb/mongodb": "^1.6",
         "php-coveralls/php-coveralls": "^2.2",
         "phploc/phploc": "^5.0|^6.0.2",
         "phpstan/extension-installer": "^1.0.4",
