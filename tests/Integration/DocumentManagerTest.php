@@ -6,16 +6,15 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Integration;
 
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\CreateCommand as DatabaseCreateCommand;
-use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
+use Chubbyphp\Laminas\Config\Doctrine\ODM\MongoDB\Tools\Console\Command\DocumentManagerCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\DocumentManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
-use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Mapping\Orm\SampleMapping;
+use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Mapping\MongodbOdm\SampleMapping;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Model\Sample;
 use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as SchemaUpdateCommand;
+use Doctrine\ODM\MongoDB\DocumentManager;
+use Doctrine\ODM\MongoDB\Tools\Console\Command\Schema\CreateCommand;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -25,7 +24,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
  * @internal
  * @coversNothing
  */
-final class EntityManagerTest extends TestCase
+final class DocumentManagerTest extends TestCase
 {
     public function test(): void
     {
@@ -33,7 +32,7 @@ final class EntityManagerTest extends TestCase
             'dependencies' => [
                 'factories' => [
                     Cache::class => ArrayCacheFactory::class,
-                    EntityManager::class => EntityManagerFactory::class,
+                    DocumentManager::class => DocumentManagerFactory::class,
                     MappingDriver::class => ClassMapDriverFactory::class,
                 ],
             ],
@@ -43,17 +42,6 @@ final class EntityManagerTest extends TestCase
                         'namespace' => 'doctrine',
                     ],
                 ],
-                'dbal' => [
-                    'connection' => [
-                        'driver' => 'pdo_mysql',
-                        'charset' => 'utf8mb4',
-                        'user' => 'root',
-                        'password' => 'root',
-                        'host' => 'localhost',
-                        'port' => 3306,
-                        'dbname' => 'sample',
-                    ],
-                ],
                 'driver' => [
                     'classMap' => [
                         'map' => [
@@ -61,12 +49,26 @@ final class EntityManagerTest extends TestCase
                         ],
                     ],
                 ],
-                'orm' => [
+                'mongodb' => [
+                    'client' => [
+                        'uri' => 'mongodb://root:root@127.0.0.1',
+                        'driverOptions' => [
+                            'typeMap' => DocumentManager::CLIENT_TYPEMAP,
+                            'driver' => [
+                                'name' => 'doctrine-odm',
+                            ],
+                        ],
+                    ],
+                ],
+                'mongodbOdm' => [
                     'configuration' => [
+                        'defaultDB' => 'sample',
+                        'hydratorDir' => '/tmp/doctrine/mongodbOdm/hydrators',
+                        'hydratorNamespace' => 'DoctrineMongoDBODMHydrators',
                         'metadataCacheImpl' => Cache::class,
                         'metadataDriverImpl' => MappingDriver::class,
-                        'proxyDir' => '/tmp/doctrine/orm/proxies',
-                        'proxyNamespace' => 'DoctrineORMProxy',
+                        'proxyDir' => '/tmp/doctrine/mongodbOdm/proxies',
+                        'proxyNamespace' => 'DoctrineMongoDBODMProxy',
                     ],
                 ],
             ],
@@ -76,25 +78,22 @@ final class EntityManagerTest extends TestCase
 
         $container = $factory(new Config($config));
 
-        /** @var EntityManager $entityManager */
-        $entityManager = $container->get(EntityManager::class);
+        /** @var DocumentManager $documentManager */
+        $documentManager = $container->get(DocumentManager::class);
 
         $output = new BufferedOutput();
 
-        $command = new EntityManagerCommand(new DatabaseCreateCommand(), $container);
-        $command->run(new ArrayInput(['--if-not-exists' => true]), $output);
-
-        $command = new EntityManagerCommand(new SchemaUpdateCommand(), $container);
-        $command->run(new ArrayInput(['--dump-sql' => true, '--force' => true]), $output);
+        $command = new DocumentManagerCommand(new CreateCommand(), $container);
+        $command->run(new ArrayInput([]), $output);
 
         $sample = new Sample();
         $sample->setName('name');
 
-        $entityManager->persist($sample);
-        $entityManager->flush();
+        $documentManager->persist($sample);
+        $documentManager->flush();
 
         /** @var Sample $sampleFromDatabase */
-        $sampleFromDatabase = $entityManager->find(Sample::class, $sample->getId());
+        $sampleFromDatabase = $documentManager->find(Sample::class, $sample->getId());
 
         self::assertInstanceOf(Sample::class, $sampleFromDatabase);
         self::assertSame($sample->getId(), $sampleFromDatabase->getId());

@@ -41,249 +41,29 @@ and the possiblity to install only the needed vendors make the difference to the
 ## Suggested
 
  * [doctrine/dbal][20]: ^2.10.3
- * [doctrine/orm][21]: ^2.7.3
+ * [doctrine/mongodb-odm][21]: ^2.1.2
+ * [doctrine/orm][22]: ^2.7.3
+ * [mongodb/mongodb][23]: ^1.5.2
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.0"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.1"
 ```
 
 ## Usage
 
-### Single connection
+### MongodbODM
 
-```php
-<?php
+ * [Single connection][30]
+ * [Multiple connection][31]
 
-declare(strict_types=1);
+### ORM
 
-use Chubbyphp\Laminas\Config\Config;
-use Chubbyphp\Laminas\Config\ContainerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\PHPDriverFactory;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Events;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Persistence\Mapping\Driver\PHPDriver;
-
-$config = [
-    'dependencies' => [
-        'factories' => [
-            Cache::class => ArrayCacheFactory::class,
-            EntityManager::class => EntityManagerFactory::class,
-            MappingDriver::class => PHPDriverFactory::class,
-            'Listener' => static function () {
-                return new \stdClass();
-            },
-            EventSubscriber::class => static function () {
-                return new class() implements EventSubscriber {
-                    public function getSubscribedEvents()
-                    {
-                        return [
-                            Events::postPersist,
-                        ];
-                    }
-                };
-            },
-        ],
-    ],
-    'doctrine' => [
-        'cache' => [
-            'array' => [
-                'namespace' => 'doctrine',
-            ],
-        ],
-        'dbal' => [
-            'connection' => [
-                'driver' => 'pdo_mysql',
-                'charset' => 'utf8mb4',
-                'user' => 'root',
-                'password' => 'root',
-                'host' => 'localhost',
-                'port' => 3306,
-                'dbname' => 'mydb',
-            ],
-        ],
-        'driver' => [
-            'phpDriver' => [
-                'locator' => '/doctrine/orm/mappings'
-            ],
-        ],
-        'eventManager' => [
-            'listeners' => [
-                ['events' => [Events::prePersist], 'listener' => 'Listener'],
-            ],
-            'subscribers' => [
-                EventSubscriber::class,
-            ],
-        ],
-        'orm' => [
-            'configuration' => [
-                'metadataDriverImpl' => MappingDriver::class,
-                'proxyDir' => '/tmp/doctrine/orm/proxies',
-                'proxyNamespace' => 'DoctrineORMProxy',
-                'metadataCacheImpl' => Cache::class,
-            ],
-        ],
-    ],
-];
-
-$factory = new ContainerFactory();
-
-$container = $factory(new Config($config));
-
-$entityManager = $container->get(EntityManager::class);
-```
-
-### Multiple connections
-
-```php
-<?php
-
-declare(strict_types=1);
-
-use Chubbyphp\Laminas\Config\Config;
-use Chubbyphp\Laminas\Config\ContainerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\PHPDriverFactory;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Events;
-use Doctrine\Persistence\Mapping\Driver\MappingDriver;
-use Doctrine\Persistence\Mapping\Driver\PHPDriver;
-
-$config = [
-    'dependencies' => [
-        'factories' => [
-            Cache::class.'read' => [ArrayCacheFactory::class, 'read'],
-            Cache::class.'write' => [ArrayCacheFactory::class, 'write'],
-            EntityManager::class.'read' => [EntityManagerFactory::class, 'read'],
-            EntityManager::class.'write' => [EntityManagerFactory::class, 'write'],
-            MappingDriver::class.'read' => PHPDriverFactory::class,
-            MappingDriver::class.'write' => PHPDriverFactory::class,
-            'Listenerread' => static function () {
-                return new \stdClass();
-            },
-            'Listenerwrite' => static function () {
-                return new \stdClass();
-            },
-            EventSubscriber::class.'read' => static function () {
-                return new class() implements EventSubscriber {
-                    public function getSubscribedEvents()
-                    {
-                        return [
-                            Events::postPersist,
-                        ];
-                    }
-                };
-            },
-            EventSubscriber::class.'write' => static function () {
-                return new class() implements EventSubscriber {
-                    public function getSubscribedEvents()
-                    {
-                        return [
-                            Events::postRemove,
-                        ];
-                    }
-                };
-            },
-        ],
-    ],
-    'doctrine' => [
-        'cache' => [
-            'array' => [
-                'read' => [
-                    'namespace' => 'doctrine-read',
-                ],
-                'write' => [
-                    'namespace' => 'doctrine-write',
-                ],
-            ],
-        ],
-        'dbal' => [
-            'connection' => [
-                'read' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 3306,
-                    'dbname' => 'mydb_read',
-                ],
-                'write' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 3306,
-                    'dbname' => 'mydb_write',
-                ],
-            ],
-        ],
-        'driver' => [
-            'phpDriver' => [
-                'read' => [
-                    'locator' => '/doctrine/orm/read/mappings'
-                ],
-                'write' => [
-                    'locator' => '/doctrine/orm/write/mappings'
-                ],
-            ],
-        ],
-        'eventManager' => [
-            'read' => [
-                'listeners' => [
-                    ['events' => [Events::prePersist], 'listener' => 'Listenerread'],
-                ],
-                'subscribers' => [
-                    EventSubscriber::class.'read',
-                ],
-            ],
-            'write' => [
-                'listeners' => [
-                    ['events' => [Events::preRemove], 'listener' => 'Listenerwrite'],
-                ],
-                'subscribers' => [
-                    EventSubscriber::class.'write',
-                ],
-            ],
-        ],
-        'orm' => [
-            'configuration' => [
-                'read' => [
-                    'metadataCacheImpl' => Cache::class.'read',
-                    'metadataDriverImpl' => MappingDriver::class.'read',
-                    'proxyDir' => '/tmp/doctrine/orm/proxies',
-                    'proxyNamespace' => 'DoctrineORMProxy',
-                ],
-                'write' => [
-                    'metadataCacheImpl' => Cache::class.'write',
-                    'metadataDriverImpl' => MappingDriver::class.'write',
-                    'proxyDir' => '/tmp/doctrine/orm/proxies',
-                    'proxyNamespace' => 'DoctrineORMProxy',
-                ],
-            ],
-        ],
-    ],
-];
-
-$factory = new ContainerFactory();
-
-$container = $factory(new Config($config));
-
-$entityManagerRead = $container->get(EntityManager::class.'read');
-$entityManagerWrite = $container->get(EntityManager::class.'write');
-```
+ * [Single connection][32]
+ * [Multiple connection][33]
 
 ## Copyright
 
@@ -303,4 +83,11 @@ Dominik Zogg 2020
 [12]: https://packagist.org/packages/psr/container
 
 [20]: https://packagist.org/packages/doctrine/dbal
-[21]: https://packagist.org/packages/doctrine/orm
+[21]: https://packagist.org/packages/doctrine/mongodb-odm
+[22]: https://packagist.org/packages/doctrine/orm
+[23]: https://packagist.org/packages/mongodb/mongodb
+
+[30]: doc/DocumentManager.md
+[31]: doc/DocumentManagers.md
+[32]: doc/EntityManager.md
+[33]: doc/EntityManagers.md

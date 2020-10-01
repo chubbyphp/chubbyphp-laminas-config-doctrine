@@ -3,6 +3,7 @@ dist: bionic
 language: php
 
 services:
+  - mongodb
   - mysql
 
 addons:
@@ -30,6 +31,8 @@ matrix:
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - mongo admin --eval 'db.createUser({user:"root",pwd:"root",roles:["root"]});'
+  - echo 'extension=mongodb.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/mongodb.ini
   - (phpenv config-rm xdebug.ini || exit 0)
   - pecl install pcov
   - echo 'Europe/Zurich' | sudo tee /etc/timezone
