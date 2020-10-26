@@ -2,10 +2,10 @@
 
 [![Build Status](https://api.travis-ci.org/chubbyphp/chubbyphp-laminas-config-doctrine.png?branch=master)](https://travis-ci.org/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-laminas-config-doctrine/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-laminas-config-doctrine?branch=master)
+[![Infection MSI](https://badge.stryker-mutator.io/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)](https://travis-ci.org/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
-[![Daily Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/d/daily)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 
 [![bugs](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-laminas-config-doctrine&metric=bugs)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-laminas-config-doctrine)
 [![code_smells](https://sonarcloud.io/api/project_badges/measure?project=chubbyphp_chubbyphp-laminas-config-doctrine&metric=code_smells)](https://sonarcloud.io/dashboard?id=chubbyphp_chubbyphp-laminas-config-doctrine)
@@ -33,7 +33,7 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Requirements
 
- * php: ^7.2
+ * php: ^7.2|8.0
  * [doctrine/cache][10]: ^1.10.2
  * [doctrine/common][11]: ^3.0.2
  * [psr/container][12]: ^1.0
