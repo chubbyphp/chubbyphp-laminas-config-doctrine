@@ -17,15 +17,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class EntityManagerCommand extends Command
 {
-    /**
-     * @var Command
-     */
-    private $command;
+    private Command $command;
 
-    /**
-     * @var ContainerInterface
-     */
-    private $container;
+    private ContainerInterface $container;
 
     public function __construct(Command $command, ContainerInterface $container)
     {

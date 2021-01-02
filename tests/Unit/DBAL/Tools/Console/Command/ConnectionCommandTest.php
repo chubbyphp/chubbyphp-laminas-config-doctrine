@@ -43,10 +43,7 @@ final class ConnectionCommandTest extends TestCase
         $connection = $this->getMockByCalls(Connection::class);
 
         $command = new class($connection) extends Command {
-            /**
-             *  @var Connection
-             */
-            private $connection;
+            private Connection $connection;
 
             public function __construct(Connection $connection)
             {
@@ -108,10 +105,7 @@ final class ConnectionCommandTest extends TestCase
         $connection = $this->getMockByCalls(Connection::class);
 
         $command = new class($connection) extends Command {
-            /**
-             *  @var Connection
-             */
-            private $connection;
+            private Connection $connection;
 
             public function __construct(Connection $connection)
             {

@@ -8,25 +8,13 @@ use Ramsey\Uuid\Uuid;
 
 final class Sample
 {
-    /**
-     * @var string
-     */
-    private $id;
+    private string $id;
 
-    /**
-     * @var \DateTime
-     */
-    private $createdAt;
+    private \DateTime $createdAt;
 
-    /**
-     * @var \DateTime|null
-     */
-    private $updatedAt;
+    private ?\DateTime $updatedAt = null;
 
-    /**
-     * @var string
-     */
-    private $name;
+    private ?string $name = null;
 
     public function __construct()
     {

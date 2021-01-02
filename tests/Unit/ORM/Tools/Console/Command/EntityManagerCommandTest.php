@@ -50,15 +50,9 @@ final class EntityManagerCommandTest extends TestCase
         ]);
 
         $command = new class($connection, $entityManager) extends Command {
-            /**
-             *  @var Connection
-             */
-            private $connection;
+            private Connection $connection;
 
-            /**
-             *  @var EntityManager
-             */
-            private $entityManager;
+            private EntityManager $entityManager;
 
             public function __construct(Connection $connection, EntityManager $entityManager)
             {
@@ -131,15 +125,9 @@ final class EntityManagerCommandTest extends TestCase
         ]);
 
         $command = new class($connection, $entityManager) extends Command {
-            /**
-             *  @var Connection
-             */
-            private $connection;
+            private Connection $connection;
 
-            /**
-             *  @var EntityManager
-             */
-            private $entityManager;
+            private EntityManager $entityManager;
 
             public function __construct(Connection $connection, EntityManager $entityManager)
             {

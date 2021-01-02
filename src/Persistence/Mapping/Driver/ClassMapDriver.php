@@ -13,7 +13,7 @@ final class ClassMapDriver implements MappingDriver
     /**
      * @var array<string, string>
      */
-    private $map;
+    private array $map;
 
     /**
      * @param array<string, string> $map
