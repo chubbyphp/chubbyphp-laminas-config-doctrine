@@ -18,10 +18,7 @@ matrix:
     - php: 7.4
       env: composerargs="--prefer-lowest"
     - php: 7.4
-#    - php: 8.0
-#      env: composerargs="--prefer-lowest --ignore-platform-reqs"
     - php: 8.0
-      env: composerargs="--ignore-platform-reqs"
 
 before_script:
   - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
