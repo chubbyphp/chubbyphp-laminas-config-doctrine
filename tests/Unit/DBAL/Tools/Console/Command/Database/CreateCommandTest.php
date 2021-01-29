@@ -73,7 +73,7 @@ final class CreateCommandTest extends TestCase
         $command->run($input, $output);
     }
 
-    public function testExecuteMysql(): void
+    public function testExecutePgsql(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -81,12 +81,12 @@ final class CreateCommandTest extends TestCase
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -102,10 +102,10 @@ final class CreateCommandTest extends TestCase
 
         self::assertSame(0, $command->run($input, $output));
 
-        self::assertSame(str_replace('dbname', $dbName, 'Created database `dbname`.'.PHP_EOL), $output->fetch());
+        self::assertSame(str_replace('dbname', $dbName, 'Created database "dbname".'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecuteMysqlDbExists(): void
+    public function testExecutePgsqlDbExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -113,23 +113,23 @@ final class CreateCommandTest extends TestCase
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -147,17 +147,15 @@ final class CreateCommandTest extends TestCase
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not create database `dbname`.
-An exception occurred while executing 'CREATE DATABASE `dbname`':
-
-SQLSTATE[HY000]: General error: 1007 Can't create database 'dbname'; database exists
+Could not create database "dbname".
+An exception occurred while executing 'CREATE DATABASE "dbname"':
 
 EOT;
 
-        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
+        self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 
-    public function testExecuteMysqlDbExistsAndIfNotExistsTrue(): void
+    public function testExecutePgsqlDbExistsAndIfNotExistsTrue(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -165,23 +163,23 @@ EOT;
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -202,7 +200,7 @@ EOT;
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
-            str_replace('dbname', $dbName, 'Database `dbname` already exists. Skipped.'.PHP_EOL),
+            str_replace('dbname', $dbName, 'Database "dbname" already exists. Skipped.'.PHP_EOL),
             $output->fetch()
         );
     }

@@ -1,10 +1,10 @@
-dist: bionic
+dist: focal
 
 language: php
 
 services:
   - mongodb
-  - mysql
+  - postgresql
 
 addons:
   sonarcloud:
@@ -21,7 +21,7 @@ matrix:
     - php: 8.0
 
 before_script:
-  - echo "USE mysql;\nUPDATE user SET authentication_string=PASSWORD('root') WHERE user='root';\nFLUSH PRIVILEGES;\n" | mysql -u root
+  - psql -c 'CREATE USER root WITH ENCRYPTED PASSWORD 'root' CREATEDB;' -U postgres
   - mongo admin --eval 'db.createUser({user:"root",pwd:"root",roles:["root"]});'
   - echo 'extension=mongodb.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/mongodb.ini
   - (phpenv config-rm xdebug.ini || exit 0)

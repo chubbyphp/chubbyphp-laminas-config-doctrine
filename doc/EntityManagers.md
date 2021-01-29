@@ -41,21 +41,21 @@ $config = [
         'dbal' => [
             'connection' => [
                 'read' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => 'sample_read',
                 ],
                 'write' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => 'sample_write',
                 ],
             ],

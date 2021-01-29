@@ -124,31 +124,31 @@ EOT;
         $command->run($input, $output);
     }
 
-    public function testExecuteMysqlWithName(): void
+    public function testExecutePgsqlWithName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
         $setupConnection = DriverManager::getConnection([
-            'driver' => 'pdo_mysql',
-            'charset' => 'utf8mb4',
+            'driver' => 'pdo_pgsql',
+            'charset' => 'utf8',
             'user' => 'root',
             'password' => 'root',
             'host' => 'localhost',
-            'port' => 3306,
+            'port' => 5432,
         ]);
 
-        $setupConnection->getSchemaManager()->createDatabase('`'.$dbName.'`');
+        $setupConnection->getSchemaManager()->createDatabase('"'.$dbName.'"');
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -168,10 +168,10 @@ EOT;
 
         self::assertSame(0, $command->run($input, $output));
 
-        self::assertSame(str_replace('dbname', $dbName, 'Dropped database `dbname`.'.PHP_EOL), $output->fetch());
+        self::assertSame(str_replace('dbname', $dbName, 'Dropped database "dbname".'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabaseIfExists(): void
+    public function testExecutePgsqlWithNameAndMissingDatabaseIfExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -179,12 +179,12 @@ EOT;
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -206,12 +206,12 @@ EOT;
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(
-            str_replace('dbname', $dbName, 'Database `dbname` doesn\'t exist. Skipped.'.PHP_EOL),
+            str_replace('dbname', $dbName, 'Database "dbname" doesn\'t exist. Skipped.'.PHP_EOL),
             $output->fetch()
         );
     }
 
-    public function testExecuteMysqlWithNameAndMissingDatabase(): void
+    public function testExecutePgsqlWithNameAndMissingDatabase(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -219,12 +219,12 @@ EOT;
         $connection = $this->getMockByCalls(Connection::class, [
             Call::create('getParams')->with()->willReturn([
                 'master' => [
-                    'driver' => 'pdo_mysql',
-                    'charset' => 'utf8mb4',
+                    'driver' => 'pdo_pgsql',
+                    'charset' => 'utf8',
                     'user' => 'root',
                     'password' => 'root',
                     'host' => 'localhost',
-                    'port' => 3306,
+                    'port' => 5432,
                     'dbname' => $dbName,
                 ],
             ]),
@@ -245,13 +245,11 @@ EOT;
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not drop database `dbname`.
-An exception occurred while executing 'DROP DATABASE `dbname`':
-
-SQLSTATE[HY000]: General error: 1008 Can't drop database 'dbname'; database doesn't exist
+Could not drop database "dbname".
+An exception occurred while executing 'DROP DATABASE "dbname"':
 
 EOT;
 
-        self::assertSame(str_replace('dbname', $dbName, $message), $output->fetch());
+        self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 }
