@@ -21,7 +21,9 @@ matrix:
     - php: 8.0
 
 before_script:
+  - while ! nc -z localhost 5432; do sleep 0.1; done # wait for postgresql
   - psql -c 'CREATE USER root WITH ENCRYPTED PASSWORD 'root' CREATEDB;' -U postgres
+  - while ! nc -z localhost 27017; do sleep 0.1; done # wait for mongodb
   - mongo admin --eval 'db.createUser({user:"root",pwd:"root",roles:["root"]});'
   - echo 'extension=mongodb.so' >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/mongodb.ini
   - (phpenv config-rm xdebug.ini || exit 0)
