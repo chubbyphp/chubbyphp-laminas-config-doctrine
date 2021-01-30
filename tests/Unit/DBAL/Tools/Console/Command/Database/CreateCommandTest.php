@@ -8,6 +8,7 @@ use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\Create
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Helper\HelperSet;
@@ -77,19 +78,13 @@ final class CreateCommandTest extends TestCase
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => $dbName,
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'primary' => [
+                'url' => getenv('POSTGRES_URL')
+                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+                'dbname' => $dbName,
+            ],
         ]);
 
         $input = new ArrayInput([]);
@@ -109,30 +104,13 @@ final class CreateCommandTest extends TestCase
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => $dbName,
-                ],
-            ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => $dbName,
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'primary' => [
+                'url' => getenv('POSTGRES_URL')
+                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+                'dbname' => $dbName,
+            ],
         ]);
 
         $input = new ArrayInput([]);
@@ -159,30 +137,46 @@ EOT;
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => $dbName,
-                ],
-            ]),
-            Call::create('getParams')->with()->willReturn([
-                'master' => [
-                    'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => $dbName,
-                ],
-            ]),
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'primary' => [
+                'url' => getenv('POSTGRES_URL')
+                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+                'dbname' => $dbName,
+            ],
+        ]);
+
+        $input = new ArrayInput([
+            '--if-not-exists' => true,
+        ]);
+
+        $output = new BufferedOutput();
+
+        $command = new CreateCommand();
+        $command->setHelperSet(new HelperSet([
+            'db' => new ConnectionHelper($connection),
+        ]));
+
+        self::assertSame(0, $command->run($input, new BufferedOutput()));
+        self::assertSame(0, $command->run($input, $output));
+
+        self::assertSame(
+            str_replace('dbname', $dbName, 'Database "dbname" already exists. Skipped.'.PHP_EOL),
+            $output->fetch()
+        );
+    }
+
+    public function testExecutePgsqlDbExistsAndIfNotExistsTrueWithMasterInsteadOfPrimary(): void
+    {
+        $dbName = sprintf('sample-%s', uniqid());
+
+        $connection = DriverManager::getConnection([
+            'driver' => 'pdo_pgsql',
+            'master' => [
+                'url' => getenv('POSTGRES_URL')
+                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
+                'dbname' => $dbName,
+            ],
         ]);
 
         $input = new ArrayInput([

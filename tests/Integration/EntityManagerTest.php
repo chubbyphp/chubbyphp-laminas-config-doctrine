@@ -46,11 +46,8 @@ final class EntityManagerTest extends TestCase
                 'dbal' => [
                     'connection' => [
                         'driver' => 'pdo_pgsql',
-                        'charset' => 'utf8',
-                        'user' => 'root',
-                        'password' => 'root',
-                        'host' => 'localhost',
-                        'port' => 5432,
+                        'url' => getenv('POSTGRES_URL')
+                            ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
                         'dbname' => 'sample',
                     ],
                 ],

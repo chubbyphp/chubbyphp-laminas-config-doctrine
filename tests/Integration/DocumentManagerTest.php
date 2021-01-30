@@ -51,7 +51,7 @@ final class DocumentManagerTest extends TestCase
                 ],
                 'mongodb' => [
                     'client' => [
-                        'uri' => 'mongodb://root:root@127.0.0.1',
+                        'uri' => getenv('MONGODB_URI') ? getenv('MONGODB_URI') : 'mongodb://root:root@localhost:27017',
                         'driverOptions' => [
                             'typeMap' => DocumentManager::CLIENT_TYPEMAP,
                             'driver' => [

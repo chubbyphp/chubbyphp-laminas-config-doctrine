@@ -42,21 +42,11 @@ $config = [
             'connection' => [
                 'read' => [
                     'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => 'sample_read',
+                    'url' => 'pgsql://root:root@localhost:5432/sample_read?charset=utf8',
                 ],
                 'write' => [
                     'driver' => 'pdo_pgsql',
-                    'charset' => 'utf8',
-                    'user' => 'root',
-                    'password' => 'root',
-                    'host' => 'localhost',
-                    'port' => 5432,
-                    'dbname' => 'sample_write',
+                    'url' => 'pgsql://root:root@localhost:5432/sample_write?charset=utf8',
                 ],
             ],
         ],

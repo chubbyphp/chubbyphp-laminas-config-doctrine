@@ -70,6 +70,10 @@ final class DropCommand extends Command
     private function getParams(Connection $connection): array
     {
         $params = $connection->getParams();
+        if (isset($params['primary'])) {
+            $params = $params['primary'];
+        }
+
         if (isset($params['master'])) {
             $params = $params['master'];
         }

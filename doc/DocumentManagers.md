@@ -55,7 +55,7 @@ $config = [
         'mongodb' => [
             'client' => [
                 'read' => [
-                    'uri' => 'mongodb://root:root@127.0.0.1',
+                    'uri' => 'mongodb://root:root@127.0.0.1:27017',
                     'driverOptions' => [
                         'typeMap' => DocumentManager::CLIENT_TYPEMAP,
                         'driver' => [
@@ -64,7 +64,7 @@ $config = [
                     ],
                 ],
                 'write' => [
-                    'uri' => 'mongodb://root:root@127.0.0.1',
+                    'uri' => 'mongodb://root:root@127.0.0.1:27017',
                     'driverOptions' => [
                         'typeMap' => DocumentManager::CLIENT_TYPEMAP,
                         'driver' => [

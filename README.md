@@ -40,7 +40,7 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^2.10.3
+ * [doctrine/dbal][20]: ^2.11
  * [doctrine/mongodb-odm][21]: ^2.1.2
  * [doctrine/orm][22]: ^2.7.3
  * [mongodb/mongodb][23]: ^1.5.2

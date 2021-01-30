@@ -33,12 +33,7 @@ $config = [
         'dbal' => [
             'connection' => [
                 'driver' => 'pdo_pgsql',
-                'charset' => 'utf8',
-                'user' => 'root',
-                'password' => 'root',
-                'host' => 'localhost',
-                'port' => 5432,
-                'dbname' => 'sample',
+                'url' => 'pgsql://root:root@localhost:5432/sample?charset=utf8',
             ],
         ],
         'driver' => [
