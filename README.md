@@ -36,7 +36,7 @@ and the possiblity to install only the needed vendors make the difference to the
  * php: ^7.4|8.0
  * [doctrine/cache][10]: ^1.10.2
  * [doctrine/common][11]: ^3.0.2
- * [psr/container][12]: ^1.0
+ * [psr/container][12]: ^1.0|^2.0
 
 ## Suggested
 
