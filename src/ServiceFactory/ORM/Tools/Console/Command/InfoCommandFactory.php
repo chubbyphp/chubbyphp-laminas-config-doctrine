@@ -4,14 +4,22 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\Tools\Console\Command;
 
-use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
+use Chubbyphp\Laminas\Config\Factory\AbstractFactory;
 use Doctrine\ORM\Tools\Console\Command\InfoCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Psr\Container\ContainerInterface;
 
-final class InfoCommandFactory
+final class InfoCommandFactory extends AbstractFactory
 {
-    public function __invoke(ContainerInterface $container): EntityManagerCommand
+    public function __invoke(ContainerInterface $container): InfoCommand
     {
-        return new EntityManagerCommand(new InfoCommand(), $container);
+        /** @var EntityManagerProvider $entityManagerProvider */
+        $entityManagerProvider = $this->resolveDependency(
+            $container,
+            EntityManagerProvider::class,
+            EntityManagerProviderFactory::class
+        );
+
+        return new InfoCommand($entityManagerProvider);
     }
 }
