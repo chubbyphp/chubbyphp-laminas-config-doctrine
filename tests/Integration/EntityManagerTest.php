@@ -6,6 +6,7 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Integration;
 
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
+use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\ConnectionCommand;
 use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\CreateCommand as DatabaseCreateCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
@@ -78,10 +79,10 @@ final class EntityManagerTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new EntityManagerCommand(new DatabaseCreateCommand(), $container);
+        $command = new ConnectionCommand(new DatabaseCreateCommand(), $container);
         $command->run(new ArrayInput(['--if-not-exists' => true]), $output);
 
-        $command = new EntityManagerCommand(new SchemaUpdateCommand(), $container);
+        $command = new ConnectionCommand(new SchemaUpdateCommand(), $container);
         $command->run(new ArrayInput(['--dump-sql' => true, '--force' => true]), $output);
 
         $sample = new Sample();
