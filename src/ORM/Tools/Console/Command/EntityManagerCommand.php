@@ -37,7 +37,10 @@ final class EntityManagerCommand extends Command
         $this->setHelp($this->command->getHelp());
         $this->setDefinition($this->command->getDefinition());
 
-        $this->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
+        // orm > 2.9
+        if (!$this->getDefinition()->hasOption('em')) {
+            $this->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
+        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int

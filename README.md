@@ -34,15 +34,16 @@ and the possiblity to install only the needed vendors make the difference to the
 ## Requirements
 
  * php: ^7.4|8.0
- * [doctrine/cache][10]: ^1.10.2
- * [doctrine/common][11]: ^3.0.2
- * [psr/container][12]: ^1.0|^2.0
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.0
+ * [doctrine/cache][11]: ^1.11.3
+ * [doctrine/common][12]: ^3.1.2
+ * [psr/container][13]: ^1.0|^2.0
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^2.11
- * [doctrine/mongodb-odm][21]: ^2.1.2
- * [doctrine/orm][22]: ^2.7.3
+ * [doctrine/dbal][20]: ^2.13.1
+ * [doctrine/mongodb-odm][21]: ^2.2.1
+ * [doctrine/orm][22]: ^2.9.1
  * [mongodb/mongodb][23]: ^1.5.2
 
 ## Installation
@@ -78,9 +79,10 @@ Dominik Zogg 2021
 [6]: https://packagist.org/packages/dasprid/container-interop-doctrine
 [7]: https://packagist.org/packages/roave/psr-container-doctrine
 
-[10]: https://packagist.org/packages/doctrine/cache
-[11]: https://packagist.org/packages/doctrine/common
-[12]: https://packagist.org/packages/psr/container
+[10]: https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-factory
+[11]: https://packagist.org/packages/doctrine/cache
+[12]: https://packagist.org/packages/doctrine/common
+[13]: https://packagist.org/packages/psr/container
 
 [20]: https://packagist.org/packages/doctrine/dbal
 [21]: https://packagist.org/packages/doctrine/mongodb-odm
