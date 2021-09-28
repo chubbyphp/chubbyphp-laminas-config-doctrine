@@ -37,7 +37,9 @@ and the possiblity to install only the needed vendors make the difference to the
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.0
  * [doctrine/cache][11]: ^1.11.3
  * [doctrine/common][12]: ^3.1.2
- * [psr/container][13]: ^1.0|^2.0
+ * [doctrine/event-manager][13]: ^1.1.1
+ * [psr/container][14]: ^1.0|^2.0
+ * [symfony/console][15]: ^4.4.30|^5.3.7
 
 ## Suggested
 
@@ -82,7 +84,10 @@ Dominik Zogg 2021
 [10]: https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-factory
 [11]: https://packagist.org/packages/doctrine/cache
 [12]: https://packagist.org/packages/doctrine/common
-[13]: https://packagist.org/packages/psr/container
+[13]: https://packagist.org/packages/doctrine/event-manager
+[14]: https://packagist.org/packages/psr/container
+[15]: https://packagist.org/packages/symfony/console
+
 
 [20]: https://packagist.org/packages/doctrine/dbal
 [21]: https://packagist.org/packages/doctrine/mongodb-odm

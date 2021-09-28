@@ -26,7 +26,9 @@
         "chubbyphp/chubbyphp-laminas-config-factory": "^1.0",
         "doctrine/cache": "^1.11.3",
         "doctrine/common": "^3.1.2",
-        "psr/container": "^1.0|^2.0"
+        "doctrine/event-manager": "^1.1.1",
+        "psr/container": "^1.0|^2.0",
+        "symfony/console": "^4.4.30|^5.3.7"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
