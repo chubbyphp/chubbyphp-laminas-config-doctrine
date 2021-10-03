@@ -37,13 +37,13 @@
         "doctrine/dbal": "^2.13.1",
         "doctrine/mongodb-odm": "^2.2.1",
         "doctrine/orm": "^2.9.1",
-        "infection/infection": "^0.20.2",
+        "infection/infection": "^0.25.2",
         "mongodb/mongodb": "^1.5.2",
         "php-coveralls/php-coveralls": "^2.4.3",
         "phploc/phploc": "^7.0.2",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^0.12.68",
-        "phpunit/phpunit": "^9.5",
+        "phpstan/phpstan": "^0.12.99",
+        "phpunit/phpunit": "^9.5.10",
         "ramsey/uuid": "^4.1"
     },
     "conflict": {

@@ -88,13 +88,13 @@ final class DropCommandTest extends TestCase
         self::assertSame(2, $command->run($input, $output));
 
         $message = <<<'EOT'
-ATTENTION: This operation should not be executed in a production environment.
+            ATTENTION: This operation should not be executed in a production environment.
 
-Would drop the database /tmp/sample.db.
-Please run the operation with --force to execute
-All data will be lost!
+            Would drop the database /tmp/sample.db.
+            Please run the operation with --force to execute
+            All data will be lost!
 
-EOT;
+            EOT;
 
         self::assertSame(str_replace('sample', $dbName, $message), $output->fetch());
     }
@@ -219,10 +219,10 @@ EOT;
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not drop database "dbname".
-An exception occurred while executing 'DROP DATABASE "dbname"':
+            Could not drop database "dbname".
+            An exception occurred while executing 'DROP DATABASE "dbname"':
 
-EOT;
+            EOT;
 
         self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
@@ -254,10 +254,10 @@ EOT;
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not drop database "dbname".
-An exception occurred while executing 'DROP DATABASE "dbname"':
+            Could not drop database "dbname".
+            An exception occurred while executing 'DROP DATABASE "dbname"':
 
-EOT;
+            EOT;
 
         self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }

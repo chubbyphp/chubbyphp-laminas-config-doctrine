@@ -12,7 +12,9 @@ $finder = PhpCsFixer\Finder::create()
 /** @var array $config */
 $config = require __DIR__ . '/vendor/chubbyphp/chubbyphp-dev-helper/phpcs.php';
 
-return PhpCsFixer\Config::create()
+$config['rules']['phpdoc_to_param_type'] = ['scalar_types' => false];
+
+return (new PhpCsFixer\Config)
     ->setIndent($config['indent'])
     ->setLineEnding($config['lineEnding'])
     ->setRules($config['rules'])

@@ -48,7 +48,7 @@ final class ClassMapDriverTest extends TestCase
             Call::create('getName')->with()->willReturn('name'),
         ]);
 
-        $mappingDriver = new ClassMapDriver([\stdClass::class => get_class($modelMapping)]);
+        $mappingDriver = new ClassMapDriver([\stdClass::class => \get_class($modelMapping)]);
         $mappingDriver->loadMetadataForClass(\stdClass::class, $classMetadata);
     }
 

@@ -54,7 +54,7 @@ final class DropCommand extends Command
 
         $ifExists = $input->getOption('if-exists');
 
-        $shouldDropDatabase = !$ifExists || in_array($dbName, $connection->getSchemaManager()->listDatabases());
+        $shouldDropDatabase = !$ifExists || \in_array($dbName, $connection->getSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {

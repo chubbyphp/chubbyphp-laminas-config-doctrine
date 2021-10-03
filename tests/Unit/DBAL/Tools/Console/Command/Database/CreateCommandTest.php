@@ -125,10 +125,10 @@ final class CreateCommandTest extends TestCase
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
-Could not create database "dbname".
-An exception occurred while executing 'CREATE DATABASE "dbname"':
+            Could not create database "dbname".
+            An exception occurred while executing 'CREATE DATABASE "dbname"':
 
-EOT;
+            EOT;
 
         self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }

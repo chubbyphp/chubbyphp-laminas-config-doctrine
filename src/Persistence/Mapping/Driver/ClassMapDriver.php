@@ -54,10 +54,6 @@ final class ClassMapDriver implements MappingDriver
      */
     public function isTransient($className): bool
     {
-        if (isset($this->map[$className])) {
-            return false;
-        }
-
-        return true;
+        return !(isset($this->map[$className]));
     }
 }

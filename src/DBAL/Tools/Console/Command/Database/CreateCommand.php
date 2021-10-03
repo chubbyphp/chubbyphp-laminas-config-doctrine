@@ -46,7 +46,7 @@ final class CreateCommand extends Command
         $ifNotExists = $input->getOption('if-not-exists');
 
         $shouldNotCreateDatabase = $ifNotExists
-            && in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases());
+            && \in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {
