@@ -14,6 +14,9 @@ $config = require __DIR__ . '/vendor/chubbyphp/chubbyphp-dev-helper/phpcs.php';
 
 $config['rules']['phpdoc_to_param_type'] = ['scalar_types' => false];
 
+// drop onces code is >= 8.0
+unset($config['rules']['phpdoc_to_return_type']);
+
 return (new PhpCsFixer\Config)
     ->setIndent($config['indent'])
     ->setLineEnding($config['lineEnding'])
