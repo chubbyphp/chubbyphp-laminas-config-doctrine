@@ -7,7 +7,6 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ODM\MongoD
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\DocumentManagerFactory;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\EventManager;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -16,6 +15,7 @@ use Doctrine\ODM\MongoDB\Repository\RepositoryFactory;
 use MongoDB\Client;
 use PHPUnit\Framework\TestCase;
 use ProxyManager\Factory\LazyLoadingGhostFactory;
+use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -30,12 +30,10 @@ final class DocumentManagerFactoryTest extends TestCase
     public function testInvoke(): void
     {
         /** @var Client $client */
-        $client = $this->getMockByCalls(Client::class, [
-            Call::create('getTypeMap')->with()->willReturn(DocumentManager::CLIENT_TYPEMAP),
-        ]);
+        $client = $this->getMockByCalls(Client::class);
 
-        /** @var Cache $cache */
-        $cache = $this->getMockByCalls(Cache::class);
+        /** @var CacheItemPoolInterface $cache */
+        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
 
         /** @var LazyLoadingGhostFactory $lazyLoadingGhostFactory */
         $lazyLoadingGhostFactory = $this->getMockByCalls(LazyLoadingGhostFactory::class);
@@ -46,7 +44,7 @@ final class DocumentManagerFactoryTest extends TestCase
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCacheImpl')->with()->willReturn($cache),
+            Call::create('getMetadataCache')->with()->willReturn($cache),
             Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
             Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
             Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
@@ -77,12 +75,10 @@ final class DocumentManagerFactoryTest extends TestCase
     public function testCallStatic(): void
     {
         /** @var Client $client */
-        $client = $this->getMockByCalls(Client::class, [
-            Call::create('getTypeMap')->with()->willReturn(DocumentManager::CLIENT_TYPEMAP),
-        ]);
+        $client = $this->getMockByCalls(Client::class);
 
-        /** @var Cache $cache */
-        $cache = $this->getMockByCalls(Cache::class);
+        /** @var CacheItemPoolInterface $cache */
+        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
 
         /** @var LazyLoadingGhostFactory $lazyLoadingGhostFactory */
         $lazyLoadingGhostFactory = $this->getMockByCalls(LazyLoadingGhostFactory::class);
@@ -93,7 +89,7 @@ final class DocumentManagerFactoryTest extends TestCase
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCacheImpl')->with()->willReturn($cache),
+            Call::create('getMetadataCache')->with()->willReturn($cache),
             Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
             Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
             Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),

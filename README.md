@@ -35,11 +35,11 @@ and the possiblity to install only the needed vendors make the difference to the
 
  * php: ^7.4|8.0
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.0
- * [doctrine/cache][11]: ^1.11.3
- * [doctrine/common][12]: ^3.1.2
+ * [doctrine/cache][11]: ^1.12.1
+ * [doctrine/common][12]: ^3.2
  * [doctrine/event-manager][13]: ^1.1.1
  * [psr/container][14]: ^1.0|^2.0
- * [symfony/console][15]: ^4.4.30|^5.3.7
+ * [symfony/console][15]: ^4.4.34|^5.3.11|^6.0.0
 
 ## Suggested
 

@@ -14,25 +14,32 @@ final class ConfigurationFactory extends AbstractFactory
     {
         $config = $this->resolveConfig($container->get('config')['doctrine']['orm']['configuration'] ?? []);
 
+        /** @var array<string, mixed> $namedQueries */
+        $namedQueries = $this->resolveValue($container, $config['namedQueries'] ?? []);
+
+        /** @var array<string, mixed> $namedNativeQueries */
+        $namedNativeQueries = $this->resolveValue($container, $config['namedNativeQueries'] ?? []);
+
+        /** @var array<string, mixed> $filters */
+        $filters = $this->resolveValue($container, $config['filters'] ?? []);
+
+        unset($config['namedQueries'], $config['namedNativeQueries'], $config['filters']);
+
         $configuration = new Configuration();
 
-        $this->callAdders($container, $configuration, $config);
+        $this->callAdders($configuration, $namedQueries, $namedNativeQueries, $filters);
         $this->callSetters($container, $configuration, $config);
 
         return $configuration;
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $namedQueries
+     * @param array<string, mixed> $namedNativeQueries
+     * @param array<string, mixed> $filters
      */
-    private function callAdders(ContainerInterface $container, Configuration $configuration, array &$config): void
+    private function callAdders(Configuration $configuration, array $namedQueries, array $namedNativeQueries, array $filters): void
     {
-        $namedQueries = $this->resolveValue($container, $config['namedQueries'] ?? []);
-        $namedNativeQueries = $this->resolveValue($container, $config['namedNativeQueries'] ?? []);
-        $filters = $this->resolveValue($container, $config['filters'] ?? []);
-
-        unset($config['namedQueries'], $config['namedNativeQueries'], $config['filters']);
-
         foreach ($namedQueries as $namedQuery) {
             $configuration->addNamedQuery($namedQuery['name'], $namedQuery['dql']);
         }

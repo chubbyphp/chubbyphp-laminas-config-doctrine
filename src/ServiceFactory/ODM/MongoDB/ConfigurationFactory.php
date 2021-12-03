@@ -14,23 +14,24 @@ final class ConfigurationFactory extends AbstractFactory
     {
         $config = $this->resolveConfig($container->get('config')['doctrine']['mongodbOdm']['configuration'] ?? []);
 
+        /** @var array<string, mixed> $filters */
+        $filters = $this->resolveValue($container, $config['filters'] ?? []);
+
+        unset($config['filters']);
+
         $configuration = new Configuration();
 
-        $this->callAdders($container, $configuration, $config);
+        $this->callAdders($configuration, $filters);
         $this->callSetters($container, $configuration, $config);
 
         return $configuration;
     }
 
     /**
-     * @param array<string, mixed> $config
+     * @param array<string, mixed> $filters
      */
-    private function callAdders(ContainerInterface $container, Configuration $configuration, array &$config): void
+    private function callAdders(Configuration $configuration, array $filters): void
     {
-        $filters = $this->resolveValue($container, $config['filters'] ?? []);
-
-        unset($config['filters']);
-
         foreach ($filters as $filter) {
             $configuration->addFilter($filter['name'], $filter['className'], $filter['parameters']);
         }
