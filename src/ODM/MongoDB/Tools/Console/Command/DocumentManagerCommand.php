@@ -16,15 +16,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class DocumentManagerCommand extends Command
 {
-    private Command $command;
-
-    private ContainerInterface $container;
-
-    public function __construct(Command $command, ContainerInterface $container)
+    public function __construct(private Command $command, private ContainerInterface $container)
     {
-        $this->command = $command;
-        $this->container = $container;
-
         parent::__construct();
     }
 
@@ -47,7 +40,7 @@ final class DocumentManagerCommand extends Command
         try {
             $documentManager = $this->container->get(DocumentManager::class.$documentManagerName);
         } catch (NotFoundExceptionInterface $serviceNotFoundException) {
-            throw new \InvalidArgumentException(sprintf('Missing document manager with name "%s"', $documentManagerName));
+            throw new \InvalidArgumentException(sprintf('Missing document manager with name "%s"', $documentManagerName), $serviceNotFoundException->getCode(), $serviceNotFoundException);
         }
 
         $this->command->setHelperSet(new HelperSet([

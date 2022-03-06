@@ -17,15 +17,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class EntityManagerCommand extends Command
 {
-    private Command $command;
-
-    private ContainerInterface $container;
-
-    public function __construct(Command $command, ContainerInterface $container)
+    public function __construct(private Command $command, private ContainerInterface $container)
     {
-        $this->command = $command;
-        $this->container = $container;
-
         parent::__construct();
     }
 
@@ -51,7 +44,7 @@ final class EntityManagerCommand extends Command
         try {
             $entityManager = $this->container->get(EntityManager::class.$entityManagerName);
         } catch (NotFoundExceptionInterface $serviceNotFoundException) {
-            throw new \InvalidArgumentException(sprintf('Missing entity manager with name "%s"', $entityManagerName));
+            throw new \InvalidArgumentException(sprintf('Missing entity manager with name "%s"', $entityManagerName), $serviceNotFoundException->getCode(), $serviceNotFoundException);
         }
 
         $this->command->setHelperSet(new HelperSet([

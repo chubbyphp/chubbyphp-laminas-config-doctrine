@@ -33,27 +33,27 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Requirements
 
- * php: ^7.4|8.0
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.0
+ * php: 8.0
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.2
  * [doctrine/cache][11]: ^1.12.1
- * [doctrine/common][12]: ^3.2
+ * [doctrine/common][12]: ^3.2.2
  * [doctrine/event-manager][13]: ^1.1.1
- * [psr/container][14]: ^1.0|^2.0
- * [symfony/console][15]: ^4.4.34|^5.3.11|^6.0.0
+ * [psr/container][14]: ^1.1.2|^2.0.2
+ * [symfony/console][15]: ^4.4.38|^5.4.5|^6.0
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^2.13.1
- * [doctrine/mongodb-odm][21]: ^2.2.1
- * [doctrine/orm][22]: ^2.9.1
- * [mongodb/mongodb][23]: ^1.5.2
+ * [doctrine/dbal][20]: ^2.13.7
+ * [doctrine/mongodb-odm][21]: ^2.3.1
+ * [doctrine/orm][22]: ^2.11.1
+ * [mongodb/mongodb][23]: ^1.11
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.2"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.3"
 ```
 
 ## Usage
@@ -70,7 +70,7 @@ composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.2"
 
 ## Copyright
 
-Dominik Zogg 2021
+Dominik Zogg 2022
 
 [1]: https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine
 

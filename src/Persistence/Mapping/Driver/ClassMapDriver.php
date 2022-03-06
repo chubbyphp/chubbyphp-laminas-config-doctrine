@@ -11,16 +11,10 @@ use Doctrine\Persistence\Mapping\MappingException;
 final class ClassMapDriver implements MappingDriver
 {
     /**
-     * @var array<string, string>
-     */
-    private array $map;
-
-    /**
      * @param array<string, string> $map
      */
-    public function __construct(array $map)
+    public function __construct(private array $map)
     {
-        $this->map = $map;
     }
 
     /**

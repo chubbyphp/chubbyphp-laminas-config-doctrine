@@ -42,13 +42,9 @@ final class DocumentManagerCommandTest extends TestCase
         $documentManager = $this->getMockByCalls(DocumentManager::class);
 
         $command = new class($documentManager) extends Command {
-            private DocumentManager $documentManager;
-
-            public function __construct(DocumentManager $documentManager)
+            public function __construct(private DocumentManager $documentManager)
             {
                 parent::__construct();
-
-                $this->documentManager = $documentManager;
             }
 
             protected function configure(): void
@@ -104,13 +100,9 @@ final class DocumentManagerCommandTest extends TestCase
         $documentManager = $this->getMockByCalls(DocumentManager::class);
 
         $command = new class($documentManager) extends Command {
-            private DocumentManager $documentManager;
-
-            public function __construct(DocumentManager $documentManager)
+            public function __construct(private DocumentManager $documentManager)
             {
                 parent::__construct();
-
-                $this->documentManager = $documentManager;
             }
 
             protected function configure(): void

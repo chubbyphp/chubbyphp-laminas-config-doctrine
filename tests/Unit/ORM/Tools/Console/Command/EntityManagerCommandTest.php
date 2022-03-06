@@ -50,16 +50,9 @@ final class EntityManagerCommandTest extends TestCase
         ]);
 
         $command = new class($connection, $entityManager) extends Command {
-            private Connection $connection;
-
-            private EntityManager $entityManager;
-
-            public function __construct(Connection $connection, EntityManager $entityManager)
+            public function __construct(private Connection $connection, private EntityManager $entityManager)
             {
                 parent::__construct();
-
-                $this->connection = $connection;
-                $this->entityManager = $entityManager;
             }
 
             protected function configure(): void
@@ -125,16 +118,9 @@ final class EntityManagerCommandTest extends TestCase
         ]);
 
         $command = new class($connection, $entityManager) extends Command {
-            private Connection $connection;
-
-            private EntityManager $entityManager;
-
-            public function __construct(Connection $connection, EntityManager $entityManager)
+            public function __construct(private Connection $connection, private EntityManager $entityManager)
             {
                 parent::__construct();
-
-                $this->connection = $connection;
-                $this->entityManager = $entityManager;
             }
 
             protected function configure(): void
