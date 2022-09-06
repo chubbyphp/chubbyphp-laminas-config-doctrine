@@ -22,6 +22,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @internal
+ *
  * @coversNothing
  */
 final class DocumentManagerTest extends TestCase

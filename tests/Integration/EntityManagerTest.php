@@ -23,6 +23,7 @@ use Symfony\Component\Console\Output\BufferedOutput;
 
 /**
  * @internal
+ *
  * @coversNothing
  */
 final class EntityManagerTest extends TestCase
