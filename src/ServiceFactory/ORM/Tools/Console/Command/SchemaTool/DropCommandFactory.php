@@ -4,14 +4,19 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\Tools\Console\Command\SchemaTool;
 
-use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\Tools\Console\ContainerEntityManagerProviderFactory;
+use Chubbyphp\Laminas\Config\Factory\AbstractFactory;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Psr\Container\ContainerInterface;
 
-final class DropCommandFactory
+final class DropCommandFactory extends AbstractFactory
 {
-    public function __invoke(ContainerInterface $container): EntityManagerCommand
+    public function __invoke(ContainerInterface $container): DropCommand
     {
-        return new EntityManagerCommand(new DropCommand(), $container);
+        /** @var EntityManagerProvider $entityManagerProvider */
+        $entityManagerProvider = $this->resolveDependency($container, EntityManagerProvider::class, ContainerEntityManagerProviderFactory::class);
+
+        return new DropCommand($entityManagerProvider);
     }
 }

@@ -9,10 +9,9 @@ use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -36,7 +35,7 @@ final class DropCommandTest extends TestCase
             'path' => $path,
         ]);
 
-        $setupConnection->getSchemaManager()->createDatabase($path);
+        $setupConnection->createSchemaManager()->createDatabase($path);
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -47,16 +46,18 @@ final class DropCommandTest extends TestCase
             Call::create('close'),
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([
             '--force' => true,
         ]);
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -77,13 +78,15 @@ final class DropCommandTest extends TestCase
             ]),
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         self::assertSame(2, $command->run($input, $output));
 
@@ -113,13 +116,15 @@ final class DropCommandTest extends TestCase
             ]),
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         $command->run($input, $output);
     }
@@ -134,7 +139,7 @@ final class DropCommandTest extends TestCase
                 ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
         ]);
 
-        $setupConnection->getSchemaManager()->createDatabase('"'.$dbName.'"');
+        $setupConnection->createSchemaManager()->createDatabase('"'.$dbName.'"');
 
         $connection = DriverManager::getConnection([
             'driver' => 'pdo_pgsql',
@@ -143,16 +148,19 @@ final class DropCommandTest extends TestCase
             'dbname' => $dbName,
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getConnection')->with('name')->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([
             '--force' => true,
+            '--connection' => 'name',
         ]);
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -172,6 +180,11 @@ final class DropCommandTest extends TestCase
             ],
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([
             '--if-exists' => true,
             '--force' => true,
@@ -179,10 +192,7 @@ final class DropCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -205,39 +215,9 @@ final class DropCommandTest extends TestCase
             ],
         ]);
 
-        $input = new ArrayInput([
-            '--force' => true,
-        ]);
-
-        $output = new BufferedOutput();
-
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
-
-        self::assertSame(1, $command->run($input, $output));
-
-        $message = <<<'EOT'
-            Could not drop database "dbname".
-            An exception occurred while executing 'DROP DATABASE "dbname"':
-
-            EOT;
-
-        self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
-    }
-
-    public function testExecutePgsqlWithNameAndMissingDatabaseWithMaster(): void
-    {
-        $dbName = sprintf('sample-%s', uniqid());
-
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'master' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
         $input = new ArrayInput([
@@ -246,16 +226,13 @@ final class DropCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new DropCommand($connectionProvider);
 
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
             Could not drop database "dbname".
-            An exception occurred while executing 'DROP DATABASE "dbname"':
+            An exception occurred while executing a query: SQLSTATE[3D000]: Invalid catalog name: 7 ERROR:  database "dbname" does not exist
 
             EOT;
 

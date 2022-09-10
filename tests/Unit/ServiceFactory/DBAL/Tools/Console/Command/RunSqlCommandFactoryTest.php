@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\DBAL\Tools\Console\Command;
 
-use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\ConnectionCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\DBAL\Tools\Console\Command\RunSqlCommandFactory;
+use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Tools\Console\Command\RunSqlCommand;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,18 +23,19 @@ final class RunSqlCommandFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        /** @var ContainerInterface $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, []);
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class);
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('has')->with(ConnectionProvider::class)->willReturn(true),
+            Call::create('get')->with(ConnectionProvider::class)->willReturn($connectionProvider),
+        ]);
 
         $factory = new RunSqlCommandFactory();
 
         $entityManagerCommand = $factory($container);
 
-        self::assertInstanceOf(ConnectionCommand::class, $entityManagerCommand);
-
-        $commandReflectionProperty = new \ReflectionProperty($entityManagerCommand, 'command');
-        $commandReflectionProperty->setAccessible(true);
-
-        self::assertInstanceOf(RunSqlCommand::class, $commandReflectionProperty->getValue($entityManagerCommand));
+        self::assertInstanceOf(RunSqlCommand::class, $entityManagerCommand);
     }
 }

@@ -6,7 +6,7 @@ namespace Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,11 +17,17 @@ final class DropCommand extends Command
     private const RETURN_CODE_NOT_DROP = 1;
     private const RETURN_CODE_NO_FORCE = 2;
 
+    public function __construct(private ConnectionProvider $connectionProvider)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this
             ->setName('dbal:database:drop')
             ->setDescription('Drops the configured database')
+            ->addOption('connection', null, InputOption::VALUE_REQUIRED, 'The named database connection')
             ->addOption('if-exists', null, InputOption::VALUE_NONE, 'No error, when the database doesn\'t exist')
             ->addOption('force', null, InputOption::VALUE_NONE, 'Set this parameter to execute this action')
         ;
@@ -29,10 +35,7 @@ final class DropCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var ConnectionHelper $helper */
-        $helper = $this->getHelper('db');
-
-        $connection = $helper->getConnection();
+        $connection = $this->getConnection($input);
 
         $params = $this->getParams($connection);
 
@@ -54,7 +57,7 @@ final class DropCommand extends Command
 
         $ifExists = $input->getOption('if-exists');
 
-        $shouldDropDatabase = !$ifExists || \in_array($dbName, $connection->getSchemaManager()->listDatabases(), true);
+        $shouldDropDatabase = !$ifExists || \in_array($dbName, $connection->createSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {
@@ -62,6 +65,18 @@ final class DropCommand extends Command
         }
 
         return $this->dropDatabase($output, $connection, $dbName, $shouldDropDatabase);
+    }
+
+    private function getConnection(InputInterface $input): Connection
+    {
+        $connectionName = $input->getOption('connection');
+        \assert(\is_string($connectionName) || null === $connectionName);
+
+        if (null !== $connectionName) {
+            return $this->connectionProvider->getConnection($connectionName);
+        }
+
+        return $this->connectionProvider->getDefaultConnection();
     }
 
     /**
@@ -72,10 +87,6 @@ final class DropCommand extends Command
         $params = $connection->getParams();
         if (isset($params['primary'])) {
             $params = $params['primary'];
-        }
-
-        if (isset($params['master'])) {
-            $params = $params['master'];
         }
 
         return $params;
@@ -116,7 +127,7 @@ final class DropCommand extends Command
     ): int {
         try {
             if ($shouldDropDatabase) {
-                $connection->getSchemaManager()->dropDatabase($dbName);
+                $connection->createSchemaManager()->dropDatabase($dbName);
                 $output->writeln(sprintf('<info>Dropped database <comment>%s</comment>.</info>', $dbName));
             } else {
                 $output->writeln(

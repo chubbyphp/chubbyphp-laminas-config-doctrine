@@ -7,16 +7,16 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Integration;
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ODM\MongoDB\Tools\Console\Command\DocumentManagerCommand;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\DocumentManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Mapping\MongodbOdm\SampleMapping;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Model\Sample;
-use Doctrine\Common\Cache\Cache;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\ODM\MongoDB\Tools\Console\Command\Schema\CreateCommand;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -32,7 +32,7 @@ final class DocumentManagerTest extends TestCase
         $config = [
             'dependencies' => [
                 'factories' => [
-                    Cache::class => ArrayCacheFactory::class,
+                    CacheItemPoolInterface::class => ArrayAdapterFactory::class,
                     DocumentManager::class => DocumentManagerFactory::class,
                     MappingDriver::class => ClassMapDriverFactory::class,
                 ],
@@ -66,7 +66,7 @@ final class DocumentManagerTest extends TestCase
                         'defaultDB' => 'sample',
                         'hydratorDir' => '/tmp/doctrine/mongodbOdm/hydrators',
                         'hydratorNamespace' => 'DoctrineMongoDBODMHydrators',
-                        'metadataCacheImpl' => Cache::class,
+                        'metadataCache' => CacheItemPoolInterface::class,
                         'metadataDriverImpl' => MappingDriver::class,
                         'proxyDir' => '/tmp/doctrine/mongodbOdm/proxies',
                         'proxyNamespace' => 'DoctrineMongoDBODMProxy',

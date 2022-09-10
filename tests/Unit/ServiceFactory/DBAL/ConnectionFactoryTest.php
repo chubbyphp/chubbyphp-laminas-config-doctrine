@@ -26,6 +26,7 @@ final class ConnectionFactoryTest extends TestCase
     {
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('getMiddlewares')->with()->willReturn([]),
             Call::create('getAutoCommit')->with()->willReturn(false),
         ]);
 
@@ -60,6 +61,7 @@ final class ConnectionFactoryTest extends TestCase
     {
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('getMiddlewares')->with()->willReturn([]),
             Call::create('getAutoCommit')->with()->willReturn(false),
         ]);
 
