@@ -9,9 +9,8 @@ use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\Console\Helper\HelperSet;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -38,13 +37,15 @@ final class CreateCommandTest extends TestCase
             ]),
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new CreateCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -63,13 +64,15 @@ final class CreateCommandTest extends TestCase
             ]),
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new CreateCommand($connectionProvider);
 
         $command->run($input, $output);
     }
@@ -87,13 +90,17 @@ final class CreateCommandTest extends TestCase
             ],
         ]);
 
-        $input = new ArrayInput([]);
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getConnection')->with('name')->willReturn($connection),
+        ]);
+
+        $input = new ArrayInput([
+            '--connection' => 'name',
+        ]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new CreateCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -113,20 +120,23 @@ final class CreateCommandTest extends TestCase
             ],
         ]);
 
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new CreateCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, new BufferedOutput()));
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
             Could not create database "dbname".
-            An exception occurred while executing 'CREATE DATABASE "dbname"':
+            An exception occurred while executing a query: SQLSTATE[42P04]: Duplicate database: 7 ERROR:  database "dbname" already exists
 
             EOT;
 
@@ -146,37 +156,10 @@ final class CreateCommandTest extends TestCase
             ],
         ]);
 
-        $input = new ArrayInput([
-            '--if-not-exists' => true,
-        ]);
-
-        $output = new BufferedOutput();
-
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
-
-        self::assertSame(0, $command->run($input, new BufferedOutput()));
-        self::assertSame(0, $command->run($input, $output));
-
-        self::assertSame(
-            str_replace('dbname', $dbName, 'Database "dbname" already exists. Skipped.'.PHP_EOL),
-            $output->fetch()
-        );
-    }
-
-    public function testExecutePgsqlDbExistsAndIfNotExistsTrueWithMasterInsteadOfPrimary(): void
-    {
-        $dbName = sprintf('sample-%s', uniqid());
-
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'master' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var ConnectionProvider|MockObject $connectionProvider */
+        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
+            Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
         $input = new ArrayInput([
@@ -185,10 +168,7 @@ final class CreateCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new CreateCommand();
-        $command->setHelperSet(new HelperSet([
-            'db' => new ConnectionHelper($connection),
-        ]));
+        $command = new CreateCommand($connectionProvider);
 
         self::assertSame(0, $command->run($input, new BufferedOutput()));
         self::assertSame(0, $command->run($input, $output));

@@ -7,22 +7,22 @@ declare(strict_types=1);
 
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use MyProject\Mapping\Orm\SampleMapping;
 use MyProject\Model\Sample;
+use Psr\Cache\CacheItemPoolInterface;
 
 $config = [
     'dependencies' => [
         'factories' => [
-            Cache::class.'read' => [ArrayCacheFactory::class, 'read'],
-            Cache::class.'write' => [ArrayCacheFactory::class, 'write'],
-            EntityManager::class.'read' => [EntityManagerFactory::class, 'read'],
-            EntityManager::class.'write' => [EntityManagerFactory::class, 'write'],
+            CacheItemPoolInterface::class.'read' => [ArrayAdapterFactory::class, 'read'],
+            CacheItemPoolInterface::class.'write' => [ArrayAdapterFactory::class, 'write'],
+            EntityManagerInterface::class.'read' => [EntityManagerFactory::class, 'read'],
+            EntityManagerInterface::class.'write' => [EntityManagerFactory::class, 'write'],
             MappingDriver::class.'read' => [ClassMapDriverFactory::class, 'read'],
             MappingDriver::class.'write' => [ClassMapDriverFactory::class, 'write'],
         ],
@@ -67,13 +67,13 @@ $config = [
         'orm' => [
             'configuration' => [
                 'read' => [
-                    'metadataCacheImpl' => Cache::class.'read',
+                    'metadataCache' => CacheItemPoolInterface::class.'read',
                     'metadataDriverImpl' => MappingDriver::class.'read',
                     'proxyDir' => '/tmp/doctrine/orm/proxies',
                     'proxyNamespace' => 'DoctrineORMProxy',
                 ],
                 'write' => [
-                    'metadataCacheImpl' => Cache::class.'write',
+                    'metadataCache' => CacheItemPoolInterface::class.'write',
                     'metadataDriverImpl' => MappingDriver::class.'write',
                     'proxyDir' => '/tmp/doctrine/orm/proxies',
                     'proxyNamespace' => 'DoctrineORMProxy',
@@ -87,9 +87,9 @@ $factory = new ContainerFactory();
 
 $container = $factory(new Config($config));
 
-/** @var EntityManager $entityManagerRead */
-$entityManagerRead = $container->get(EntityManager::class.'read');
+/** @var EntityManagerInterface $entityManagerRead */
+$entityManagerRead = $container->get(EntityManagerInterface::class.'read');
 
-/** @var EntityManager $entityManagerWrite */
-$entityManagerWrite = $container->get(EntityManager::class.'write');
+/** @var EntityManagerInterface $entityManagerWrite */
+$entityManagerWrite = $container->get(EntityManagerInterface::class.'write');
 ```

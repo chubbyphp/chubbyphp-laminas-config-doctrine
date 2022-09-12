@@ -35,11 +35,11 @@ and the possiblity to install only the needed vendors make the difference to the
 
  * php: 8.0
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.2
- * [doctrine/cache][11]: ^1.12.1
- * [doctrine/common][12]: ^3.2.2
- * [doctrine/event-manager][13]: ^1.1.1
- * [psr/container][14]: ^1.1.2|^2.0.2
- * [symfony/console][15]: ^4.4.38|^5.4.5|^6.0
+ * [doctrine/common][11]: ^3.4
+ * [doctrine/event-manager][12]: ^1.1.2
+ * [psr/container][13]: ^1.1.2|^2.0.2
+ * [symfony/cache][14]: ^5.4.11|^6.1.3
+ * [symfony/console][14]: ^5.4.11|^6.1.3
 
 ## Suggested
 
@@ -53,7 +53,7 @@ and the possiblity to install only the needed vendors make the difference to the
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^1.3"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.0"
 ```
 
 ## Usage
@@ -82,12 +82,11 @@ Dominik Zogg 2022
 [7]: https://packagist.org/packages/roave/psr-container-doctrine
 
 [10]: https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-factory
-[11]: https://packagist.org/packages/doctrine/cache
-[12]: https://packagist.org/packages/doctrine/common
-[13]: https://packagist.org/packages/doctrine/event-manager
-[14]: https://packagist.org/packages/psr/container
+[11]: https://packagist.org/packages/doctrine/common
+[12]: https://packagist.org/packages/doctrine/event-manager
+[13]: https://packagist.org/packages/psr/container
+[14]: https://packagist.org/packages/symfony/cache
 [15]: https://packagist.org/packages/symfony/console
-
 
 [20]: https://packagist.org/packages/doctrine/dbal
 [21]: https://packagist.org/packages/doctrine/mongodb-odm

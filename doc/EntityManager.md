@@ -7,20 +7,20 @@ declare(strict_types=1);
 
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use MyProject\Mapping\Orm\SampleMapping;
 use MyProject\Model\Sample;
+use Psr\Cache\CacheItemPoolInterface;
 
 $config = [
     'dependencies' => [
         'factories' => [
-            Cache::class => ArrayCacheFactory::class,
-            EntityManager::class => EntityManagerFactory::class,
+            CacheItemPoolInterface::class => ArrayAdapterFactory::class,
+            EntityManagerInterface::class => EntityManagerFactory::class,
             MappingDriver::class => ClassMapDriverFactory::class,
         ],
     ],
@@ -45,10 +45,10 @@ $config = [
         ],
         'orm' => [
             'configuration' => [
+                'metadataCache' => CacheItemPoolInterface::class,
                 'metadataDriverImpl' => MappingDriver::class,
                 'proxyDir' => '/tmp/doctrine/orm/proxies',
                 'proxyNamespace' => 'DoctrineORMProxy',
-                'metadataCacheImpl' => Cache::class,
             ],
         ],
     ],
@@ -58,6 +58,6 @@ $factory = new ContainerFactory();
 
 $container = $factory(new Config($config));
 
-/** @var EntityManager $entityManager */
-$entityManager = $container->get(EntityManager::class);
+/** @var EntityManagerInterface $entityManager */
+$entityManager = $container->get(EntityManagerInterface::class);
 ```

@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ORM\Tools\Console\Command\ClearCache;
 
-use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\Tools\Console\Command\ClearCache\MetadataCommandFactory;
+use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -22,18 +23,19 @@ final class MetadataCommandFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        /** @var EntityManagerProvider $entityManagerProvider */
+        $entityManagerProvider = $this->getMockByCalls(EntityManagerProvider::class, []);
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class);
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('has')->with(EntityManagerProvider::class)->willReturn(true),
+            Call::create('get')->with(EntityManagerProvider::class)->willReturn($entityManagerProvider),
+        ]);
 
         $factory = new MetadataCommandFactory();
 
         $entityManagerCommand = $factory($container);
 
-        self::assertInstanceOf(EntityManagerCommand::class, $entityManagerCommand);
-
-        $commandReflectionProperty = new \ReflectionProperty($entityManagerCommand, 'command');
-        $commandReflectionProperty->setAccessible(true);
-
-        self::assertInstanceOf(MetadataCommand::class, $commandReflectionProperty->getValue($entityManagerCommand));
+        self::assertInstanceOf(MetadataCommand::class, $entityManagerCommand);
     }
 }

@@ -2,7 +2,6 @@ name: CI
 
 on:
   push:
-  pull_request:
   schedule:
     - cron: '0 0 * * *'
 
@@ -12,14 +11,14 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       mongo:
-        image: mongo:4.4-bionic
+        image: mongo:5.0
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: root
         ports:
           - 27017:27017
       postgres:
-        image: postgres:13
+        image: postgres:14
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root
@@ -44,14 +43,14 @@ jobs:
     runs-on: ubuntu-20.04
     services:
       mongo:
-        image: mongo:4.4-bionic
+        image: mongo:5.0
         env:
           MONGO_INITDB_ROOT_USERNAME: root
           MONGO_INITDB_ROOT_PASSWORD: root
         ports:
           - 27017:27017
       postgres:
-        image: postgres:13
+        image: postgres:14
         env:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: root

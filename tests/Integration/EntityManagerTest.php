@@ -7,17 +7,22 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Integration;
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\CreateCommand as DatabaseCreateCommand;
-use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\Command\EntityManagerCommand;
-use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayCacheFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\DBAL\ConnectionFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\DBAL\Tools\Console\ContainerConnectionProviderFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\Tools\Console\ContainerEntityManagerProviderFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Mapping\Orm\SampleMapping;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Model\Sample;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManager;
+use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as SchemaUpdateCommand;
+use Doctrine\ORM\Tools\Console\EntityManagerProvider;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
 
@@ -33,8 +38,11 @@ final class EntityManagerTest extends TestCase
         $config = [
             'dependencies' => [
                 'factories' => [
-                    Cache::class => ArrayCacheFactory::class,
-                    EntityManager::class => EntityManagerFactory::class,
+                    CacheItemPoolInterface::class => ArrayAdapterFactory::class,
+                    Connection::class => ConnectionFactory::class,
+                    ConnectionProvider::class => ContainerConnectionProviderFactory::class,
+                    EntityManagerInterface::class => EntityManagerFactory::class,
+                    EntityManagerProvider::class => ContainerEntityManagerProviderFactory::class,
                     MappingDriver::class => ClassMapDriverFactory::class,
                 ],
             ],
@@ -61,7 +69,7 @@ final class EntityManagerTest extends TestCase
                 ],
                 'orm' => [
                     'configuration' => [
-                        'metadataCacheImpl' => Cache::class,
+                        'metadataCache' => CacheItemPoolInterface::class,
                         'metadataDriverImpl' => MappingDriver::class,
                         'proxyDir' => '/tmp/doctrine/orm/proxies',
                         'proxyNamespace' => 'DoctrineORMProxy',
@@ -74,15 +82,21 @@ final class EntityManagerTest extends TestCase
 
         $container = $factory(new Config($config));
 
-        /** @var EntityManager $entityManager */
-        $entityManager = $container->get(EntityManager::class);
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $container->get(EntityManagerInterface::class);
+
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $container->get(ConnectionProvider::class);
+
+        /** @var EntityManagerProvider $entityManagerProvider */
+        $entityManagerProvider = $container->get(EntityManagerProvider::class);
 
         $output = new BufferedOutput();
 
-        $command = new EntityManagerCommand(new DatabaseCreateCommand(), $container);
+        $command = new DatabaseCreateCommand($connectionProvider);
         $command->run(new ArrayInput(['--if-not-exists' => true]), $output);
 
-        $command = new EntityManagerCommand(new SchemaUpdateCommand(), $container);
+        $command = new SchemaUpdateCommand($entityManagerProvider);
         $command->run(new ArrayInput(['--dump-sql' => true, '--force' => true]), $output);
 
         $sample = new Sample();

@@ -6,7 +6,7 @@ namespace Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
+use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -16,21 +16,24 @@ final class CreateCommand extends Command
 {
     private const RETURN_CODE_NOT_CREATE = 1;
 
+    public function __construct(private ConnectionProvider $connectionProvider)
+    {
+        parent::__construct();
+    }
+
     protected function configure(): void
     {
         $this
             ->setName('dbal:database:create')
             ->setDescription('Creates the configured database')
+            ->addOption('connection', null, InputOption::VALUE_REQUIRED, 'The named database connection')
             ->addOption('if-not-exists', null, InputOption::VALUE_NONE, 'No error, when the database already exists')
         ;
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        /** @var ConnectionHelper $helper */
-        $helper = $this->getHelper('db');
-
-        $connection = $helper->getConnection();
+        $connection = $this->getConnection($input);
 
         $params = $this->getParams($connection);
 
@@ -46,7 +49,7 @@ final class CreateCommand extends Command
         $ifNotExists = $input->getOption('if-not-exists');
 
         $shouldNotCreateDatabase = $ifNotExists
-            && \in_array($dbName, $tmpConnection->getSchemaManager()->listDatabases(), true);
+            && \in_array($dbName, $tmpConnection->createSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {
@@ -54,6 +57,18 @@ final class CreateCommand extends Command
         }
 
         return $this->createDatabase($output, $tmpConnection, $dbName, $shouldNotCreateDatabase);
+    }
+
+    private function getConnection(InputInterface $input): Connection
+    {
+        $connectionName = $input->getOption('connection');
+        \assert(\is_string($connectionName) || null === $connectionName);
+
+        if (null !== $connectionName) {
+            return $this->connectionProvider->getConnection($connectionName);
+        }
+
+        return $this->connectionProvider->getDefaultConnection();
     }
 
     /**
@@ -64,10 +79,6 @@ final class CreateCommand extends Command
         $params = $connection->getParams();
         if (isset($params['primary'])) {
             $params = $params['primary'];
-        }
-
-        if (isset($params['master'])) {
-            $params = $params['master'];
         }
 
         return $params;
@@ -101,7 +112,7 @@ final class CreateCommand extends Command
                     sprintf('<info>Database <comment>%s</comment> already exists. Skipped.</info>', $dbName)
                 );
             } else {
-                $tmpConnection->getSchemaManager()->createDatabase($dbName);
+                $tmpConnection->createSchemaManager()->createDatabase($dbName);
                 $output->writeln(sprintf('<info>Created database <comment>%s</comment>.</info>', $dbName));
             }
 

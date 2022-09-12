@@ -24,40 +24,43 @@
     "require": {
         "php": "^8.0",
         "chubbyphp/chubbyphp-laminas-config-factory": "^1.2",
-        "doctrine/cache": "^1.12.1",
-        "doctrine/common": "^3.2.2",
-        "doctrine/event-manager": "^1.1.1",
+        "doctrine/common": "^3.4",
+        "doctrine/event-manager": "^1.1.2",
         "psr/container": "^1.1.2|^2.0.2",
-        "symfony/console": "^4.4.38|^5.4.5|^6.0"
+        "symfony/cache": "^5.4.11|^6.1.3",
+        "symfony/console": "^5.4.11|^6.1.3"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
-        "chubbyphp/chubbyphp-laminas-config": "^1.0",
-        "chubbyphp/chubbyphp-mock": "^1.6.1",
-        "doctrine/dbal": "^2.13.7",
-        "doctrine/mongodb-odm": "^2.3.1",
-        "doctrine/orm": "^2.11.1",
-        "infection/infection": "^0.26.5",
-        "mongodb/mongodb": "^1.11",
+        "chubbyphp/chubbyphp-laminas-config": "^1.3",
+        "chubbyphp/chubbyphp-mock": "^1.6.2",
+        "doctrine/dbal": "^3.4.4",
+        "doctrine/mongodb-odm": "^2.4.2",
+        "doctrine/orm": "^2.13.1",
+        "infection/infection": "^0.26.14",
+        "mongodb/mongodb": "^1.13.1",
         "php-coveralls/php-coveralls": "^2.5.2",
         "phploc/phploc": "^7.0.2",
         "phpstan/extension-installer": "^1.1",
-        "phpstan/phpstan": "^1.4.8",
-        "phpunit/phpunit": "^9.5.17",
-        "ramsey/uuid": "^4.2.3"
+        "phpstan/phpstan": "^1.8.5",
+        "phpunit/phpunit": "^9.5.24",
+        "ramsey/uuid": "^4.4"
     },
     "conflict": {
-        "doctrine/dbal": "<2.13.7 || >=3.0",
-        "doctrine/persistence": "<2.2.3",
-        "doctrine/mongodb-odm": "<2.3.1 || >=3.0",
-        "doctrine/orm": "<2.11.1 || >=3.0",
-        "mongodb/mongodb": "<1.11|| >=2.0"
+        "doctrine/dbal": "<3.4.4 || >=4.0",
+        "doctrine/mongodb-odm": "<2.4.2 || >=3.0",
+        "doctrine/orm": "<2.13.1 || >=3.0",
+        "mongodb/mongodb": "<1.13.1|| >=2.0"
     },
     "autoload": {
-        "psr-4": { "Chubbyphp\\Laminas\\Config\\Doctrine\\": "src/" }
+        "psr-4": {
+            "Chubbyphp\\Laminas\\Config\\Doctrine\\": "src/"
+        }
     },
     "autoload-dev": {
-        "psr-4": { "Chubbyphp\\Tests\\Laminas\\Config\\Doctrine\\": "tests/" }
+        "psr-4": {
+            "Chubbyphp\\Tests\\Laminas\\Config\\Doctrine\\": "tests/"
+        }
     },
     "config": {
         "sort-packages": true,
@@ -68,7 +71,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.3-dev"
+            "dev-master": "2.0-dev"
         }
     },
     "scripts": {
@@ -83,7 +86,7 @@
             "@test:cs"
         ],
         "test:cs": "mkdir -p build && PHP_CS_FIXER_IGNORE_ENV=1 vendor/bin/php-cs-fixer fix --dry-run --stop-on-violation --cache-file=build/phpcs.cache",
-        "test:infection": "vendor/bin/infection --threads=$(nproc) --min-msi=100 --verbose --coverage=build/phpunit",
+        "test:infection": "vendor/bin/infection --threads=$(nproc) --min-msi=73 --verbose --coverage=build/phpunit",
         "test:integration": "vendor/bin/phpunit --testsuite=Integration --cache-result-file=build/phpunit/result.cache",
         "test:lint": "mkdir -p build && find src tests -name '*.php' -print0 | xargs -0 -n1 -P$(nproc) php -l | tee build/phplint.log",
         "test:loc": "mkdir -p build && vendor/bin/phploc src | tee build/phploc.log",
