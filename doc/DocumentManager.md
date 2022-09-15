@@ -45,7 +45,7 @@ $config = [
         ],
         'mongodbOdm' => [
             'configuration' => [
-                'metadataDriver' => MappingDriver::class,
+                'metadataDriverImpl' => MappingDriver::class,
                 'proxyDir' => '/tmp/doctrine/mongodbOdm/proxies',
                 'proxyNamespace' => 'DoctrineMongoDBODMProxy',
                 'hydratorDir' => '/tmp/doctrine/mongodbOdm/hydrators',
