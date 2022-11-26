@@ -26,7 +26,7 @@ jobs:
           - 5432:5432
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: wait for databases
         run: |
           while ! nc -z localhost 27017; do sleep 0.1; done
@@ -58,7 +58,7 @@ jobs:
           - 5432:5432
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: wait for databases
         run: |
           while ! nc -z localhost 27017; do sleep 0.1; done
