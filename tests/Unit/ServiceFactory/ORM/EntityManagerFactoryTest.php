@@ -63,6 +63,7 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
             Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
             Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(false),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
         ]);
 
@@ -115,6 +116,7 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
             Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
             Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(false),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
         ]);
 

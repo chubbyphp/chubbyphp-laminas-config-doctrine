@@ -35,17 +35,17 @@ and the possiblity to install only the needed vendors make the difference to the
 
  * php: 8.0
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.2
- * [doctrine/common][11]: ^3.4
- * [doctrine/event-manager][12]: ^1.1.2
+ * [doctrine/common][11]: ^3.4.3
+ * [doctrine/event-manager][12]: ^1.2
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^5.4.11|^6.1.3
- * [symfony/console][14]: ^5.4.11|^6.1.3
+ * [symfony/cache][14]: ^5.4.15|^6.1.8
+ * [symfony/console][14]: ^5.4.15|^6.1.8
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^3.4.4
- * [doctrine/mongodb-odm][21]: ^2.4.2
- * [doctrine/orm][22]: ^2.13.1
+ * [doctrine/dbal][20]: ^3.5.2
+ * [doctrine/mongodb-odm][21]: ^2.4.3
+ * [doctrine/orm][22]: ^2.14
  * [mongodb/mongodb][23]: ^1.13.1
 
 ## Installation
