@@ -38,8 +38,8 @@ and the possiblity to install only the needed vendors make the difference to the
  * [doctrine/common][11]: ^3.4.3
  * [doctrine/event-manager][12]: ^1.2
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^5.4.15|^6.1.8
- * [symfony/console][14]: ^5.4.15|^6.1.8
+ * [symfony/cache][14]: ^6.0.17
+ * [symfony/console][14]: ^6.0.17
 
 ## Suggested
 
