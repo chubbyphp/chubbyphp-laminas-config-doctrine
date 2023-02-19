@@ -38,15 +38,15 @@ and the possiblity to install only the needed vendors make the difference to the
  * [doctrine/common][11]: ^3.4.3
  * [doctrine/event-manager][12]: ^1.2
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^6.0.17
- * [symfony/console][14]: ^6.0.17
+ * [symfony/cache][14]: ^6.0.19
+ * [symfony/console][14]: ^6.0.19
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^3.5.2
+ * [doctrine/dbal][20]: ^3.6
  * [doctrine/mongodb-odm][21]: ^2.4.3
- * [doctrine/orm][22]: ^2.14
- * [mongodb/mongodb][23]: ^1.13.1
+ * [doctrine/orm][22]: ^2.14.1
+ * [mongodb/mongodb][23]: ^1.15
 
 ## Installation
 

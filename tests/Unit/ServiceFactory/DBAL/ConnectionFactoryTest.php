@@ -10,6 +10,7 @@ use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Configuration;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Schema\SchemaManagerFactory;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -24,10 +25,14 @@ final class ConnectionFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        /** @var SchemaManagerFactory $schemaManagerFactory */
+        $schemaManagerFactory = $this->getMockByCalls(SchemaManagerFactory::class, []);
+
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getMiddlewares')->with()->willReturn([]),
             Call::create('getAutoCommit')->with()->willReturn(false),
+            Call::create('getSchemaManagerFactory')->with()->willReturn($schemaManagerFactory),
         ]);
 
         /** @var EventManager $eventManager */
@@ -59,10 +64,14 @@ final class ConnectionFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        /** @var SchemaManagerFactory $schemaManagerFactory */
+        $schemaManagerFactory = $this->getMockByCalls(SchemaManagerFactory::class, []);
+
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
             Call::create('getMiddlewares')->with()->willReturn([]),
             Call::create('getAutoCommit')->with()->willReturn(false),
+            Call::create('getSchemaManagerFactory')->with()->willReturn($schemaManagerFactory),
         ]);
 
         /** @var EventManager $eventManager */
