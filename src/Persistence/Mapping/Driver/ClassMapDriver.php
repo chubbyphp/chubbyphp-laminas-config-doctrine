@@ -13,9 +13,7 @@ final class ClassMapDriver implements MappingDriver
     /**
      * @param array<string, string> $map
      */
-    public function __construct(private array $map)
-    {
-    }
+    public function __construct(private array $map) {}
 
     /**
      * @param string $className

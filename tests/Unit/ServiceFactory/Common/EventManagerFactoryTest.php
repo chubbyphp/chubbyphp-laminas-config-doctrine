@@ -38,10 +38,6 @@ final class EventManagerFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(EventManager::class, $service);
-
-        $listeners = $service->getListeners();
-
-        self::assertCount(0, $listeners);
     }
 
     public function testInvoke(): void
@@ -85,12 +81,14 @@ final class EventManagerFactoryTest extends TestCase
 
         self::assertInstanceOf(EventManager::class, $service);
 
-        $listeners = $service->getListeners();
+        $prePersistListeners = $service->getListeners(Events::prePersist);
+        $postPersistListeners = $service->getListeners(Events::postPersist);
 
-        self::assertCount(2, $listeners);
+        self::assertCount(1, $prePersistListeners);
+        self::assertCount(1, $postPersistListeners);
 
-        self::assertInstanceOf(\stdClass::class, array_shift($listeners['prePersist']));
-        self::assertInstanceOf(EventSubscriber::class, array_shift($listeners['postPersist']));
+        self::assertInstanceOf(\stdClass::class, array_shift($prePersistListeners));
+        self::assertInstanceOf(EventSubscriber::class, array_shift($postPersistListeners));
     }
 
     public function testCallStatic(): void
@@ -136,11 +134,13 @@ final class EventManagerFactoryTest extends TestCase
 
         self::assertInstanceOf(EventManager::class, $service);
 
-        $listeners = $service->getListeners();
+        $prePersistListeners = $service->getListeners(Events::prePersist);
+        $postPersistListeners = $service->getListeners(Events::postPersist);
 
-        self::assertCount(2, $listeners);
+        self::assertCount(1, $prePersistListeners);
+        self::assertCount(1, $postPersistListeners);
 
-        self::assertInstanceOf(\stdClass::class, array_shift($listeners['prePersist']));
-        self::assertInstanceOf(EventSubscriber::class, array_shift($listeners['postPersist']));
+        self::assertInstanceOf(\stdClass::class, array_shift($prePersistListeners));
+        self::assertInstanceOf(EventSubscriber::class, array_shift($postPersistListeners));
     }
 }

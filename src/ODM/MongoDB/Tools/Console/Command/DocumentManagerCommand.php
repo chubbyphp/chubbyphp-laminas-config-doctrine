@@ -47,6 +47,6 @@ final class DocumentManagerCommand extends Command
             'dm' => new DocumentManagerHelper($documentManager),
         ]));
 
-        return (int) $this->command->execute($input, $output);
+        return (int) $this->command->run($input, $output);
     }
 }

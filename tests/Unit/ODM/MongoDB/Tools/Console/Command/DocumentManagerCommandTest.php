@@ -59,7 +59,7 @@ final class DocumentManagerCommandTest extends TestCase
                 ;
             }
 
-            protected function execute(InputInterface $input, OutputInterface $output): void
+            protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 /** @var DocumentManagerHelper $documentManagerHelper */
                 $documentManagerHelper = $this->getHelperSet()->get('dm');
@@ -67,6 +67,8 @@ final class DocumentManagerCommandTest extends TestCase
                 Assert::assertSame($this->documentManager, $documentManagerHelper->getDocumentManager());
 
                 $output->writeln('it works!');
+
+                return 0;
             }
         };
 
@@ -112,12 +114,14 @@ final class DocumentManagerCommandTest extends TestCase
                 ;
             }
 
-            protected function execute(InputInterface $input, OutputInterface $output): void
+            protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 /** @var DocumentManagerHelper $documentManagerHelper */
                 $documentManagerHelper = $this->getHelperSet()->get('dm');
 
                 Assert::assertSame($this->documentManager, $documentManagerHelper->getDocumentManager());
+
+                return 0;
             }
         };
 
@@ -141,8 +145,7 @@ final class DocumentManagerCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $exception = new class() extends \Exception implements NotFoundExceptionInterface {
-        };
+        $exception = new class() extends \Exception implements NotFoundExceptionInterface {};
 
         $command = new class() extends Command {
             protected function configure(): void
@@ -152,8 +155,9 @@ final class DocumentManagerCommandTest extends TestCase
                 ;
             }
 
-            protected function execute(InputInterface $input, OutputInterface $output): void
+            protected function execute(InputInterface $input, OutputInterface $output): int
             {
+                return 0;
             }
         };
 

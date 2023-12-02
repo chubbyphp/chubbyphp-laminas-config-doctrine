@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/chubbyphp/chubbyphp-laminas-config-doctrine/workflows/CI/badge.svg?branch=master)](https://github.com/chubbyphp/chubbyphp-laminas-config-doctrine/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-laminas-config-doctrine/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-laminas-config-doctrine?branch=master)
-[![Infection MSI](https://badge.stryker-mutator.io/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fchubbyphp%2Fchubbyphp-laminas-config-doctrine%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)[![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
@@ -33,27 +33,27 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Requirements
 
- * php: 8.0
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.2
+ * php: 8.1
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.3
  * [doctrine/common][11]: ^3.4.3
- * [doctrine/event-manager][12]: ^1.2
+ * [doctrine/event-manager][12]: ^1.2|^2.0
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^6.0.19
- * [symfony/console][14]: ^6.0.19
+ * [symfony/cache][14]: ^5.4.31|^6.3.8|^7.0
+ * [symfony/console][14]: ^5.4.31|^6.3.8|^7.0
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^3.6
- * [doctrine/mongodb-odm][21]: ^2.4.3
- * [doctrine/orm][22]: ^2.14.1
- * [mongodb/mongodb][23]: ^1.15
+ * [doctrine/dbal][20]: ^3.7.2
+ * [doctrine/mongodb-odm][21]: ^2.6.1
+ * [doctrine/orm][22]: ^2.17.1
+ * [mongodb/mongodb][23]: ^1.17
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.0"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.1"
 ```
 
 ## Usage

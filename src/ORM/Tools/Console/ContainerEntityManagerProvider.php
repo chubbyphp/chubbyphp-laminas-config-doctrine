@@ -10,9 +10,7 @@ use Psr\Container\ContainerInterface;
 
 final class ContainerEntityManagerProvider implements EntityManagerProvider
 {
-    public function __construct(private ContainerInterface $container)
-    {
-    }
+    public function __construct(private ContainerInterface $container) {}
 
     public function getDefaultManager(): EntityManagerInterface
     {
