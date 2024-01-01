@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/chubbyphp/chubbyphp-laminas-config-doctrine/workflows/CI/badge.svg?branch=master)](https://github.com/chubbyphp/chubbyphp-laminas-config-doctrine/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/github/chubbyphp/chubbyphp-laminas-config-doctrine/badge.svg?branch=master)](https://coveralls.io/github/chubbyphp/chubbyphp-laminas-config-doctrine?branch=master)
-[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fchubbyphp%2Fchubbyphp-laminas-config-doctrine%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)[![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
+[![Mutation testing badge](https://img.shields.io/endpoint?style=flat&url=https%3A%2F%2Fbadge-api.stryker-mutator.io%2Fgithub.com%2Fchubbyphp%2Fchubbyphp-laminas-config-doctrine%2Fmaster)](https://dashboard.stryker-mutator.io/reports/github.com/chubbyphp/chubbyphp-laminas-config-doctrine/master)
 [![Latest Stable Version](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/v/stable.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Total Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/downloads.png)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
 [![Monthly Downloads](https://poser.pugx.org/chubbyphp/chubbyphp-laminas-config-doctrine/d/monthly)](https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine)
