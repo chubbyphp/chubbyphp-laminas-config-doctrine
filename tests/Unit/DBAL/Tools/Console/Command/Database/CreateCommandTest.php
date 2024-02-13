@@ -8,7 +8,8 @@ use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\Create
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Input\ArrayInput;
@@ -23,7 +24,7 @@ final class CreateCommandTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testExecuteSqlite(): void
+    public function testExecuteFakeSqlite(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -42,17 +43,27 @@ final class CreateCommandTest extends TestCase
             Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('createDatabase')->with($path),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        ]);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand($connectionProvider);
+        $command = new CreateCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(str_replace('dbname', $path, 'Created database dbname.'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecuteSqliteWithMissingPath(): void
+    public function testExecuteFakeSqliteWithMissingPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Connection does not contain a \'path\' or \'dbname\' parameter.');
@@ -72,22 +83,24 @@ final class CreateCommandTest extends TestCase
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand($connectionProvider);
+        $command = new CreateCommand($connectionProvider, static fn (array $params) => null);
 
         $command->run($input, $output);
     }
 
-    public function testExecutePgsql(): void
+    public function testExecuteFakePgsql(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'primary' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
@@ -95,43 +108,76 @@ final class CreateCommandTest extends TestCase
             Call::create('getConnection')->with('name')->willReturn($connection),
         ]);
 
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('createDatabase')->with('"'.$dbName.'"'),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        ]);
+
         $input = new ArrayInput([
             '--connection' => 'name',
         ]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand($connectionProvider);
+        $command = new CreateCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(str_replace('dbname', $dbName, 'Created database "dbname".'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecutePgsqlDbExists(): void
+    public function testExecuteFakePgsqlDbExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'primary' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
         $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
             Call::create('getDefaultConnection')->with()->willReturn($connection),
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('createDatabase')->with('"'.$dbName.'"')
+                ->willThrowException(new \Exception('An exception occurred while executing a query: SQLSTATE[42P04]: Duplicate database: 7 ERROR:  database "'.$dbName.'" already exists')),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
         ]);
 
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new CreateCommand($connectionProvider);
+        $command = new CreateCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
-        self::assertSame(0, $command->run($input, new BufferedOutput()));
         self::assertSame(1, $command->run($input, $output));
 
         $message = <<<'EOT'
@@ -143,23 +189,40 @@ final class CreateCommandTest extends TestCase
         self::assertStringStartsWith(str_replace('dbname', $dbName, $message), $output->fetch());
     }
 
-    public function testExecutePgsqlDbExistsAndIfNotExistsTrue(): void
+    public function testExecuteFakePgsqlDbExistsAndIfNotExistsTrue(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'primary' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
         $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
             Call::create('getDefaultConnection')->with()->willReturn($connection),
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('listDatabases')->with()->willReturn([$dbName]),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
         ]);
 
         $input = new ArrayInput([
@@ -168,9 +231,8 @@ final class CreateCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new CreateCommand($connectionProvider);
+        $command = new CreateCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
-        self::assertSame(0, $command->run($input, new BufferedOutput()));
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(

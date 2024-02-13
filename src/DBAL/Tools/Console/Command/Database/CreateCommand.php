@@ -16,9 +16,16 @@ final class CreateCommand extends Command
 {
     private const RETURN_CODE_NOT_CREATE = 1;
 
-    public function __construct(private ConnectionProvider $connectionProvider)
+    /**
+     * @param \Closure(array $params): Connection $postParse
+     */
+    private null|\Closure $connectionFactory;
+
+    public function __construct(private ConnectionProvider $connectionProvider, null|\Closure $connectionFactory = null)
     {
         parent::__construct();
+
+        $this->connectionFactory = $connectionFactory ?? static fn (array $params) => DriverManager::getConnection($params);
     }
 
     protected function configure(): void
@@ -44,7 +51,7 @@ final class CreateCommand extends Command
         // Need to get rid of _every_ occurrence of dbname from connection configuration
         unset($params['dbname'], $params['path'], $params['url']);
 
-        $tmpConnection = DriverManager::getConnection($params);
+        $tmpConnection = ($this->connectionFactory)($params);
 
         $ifNotExists = $input->getOption('if-not-exists');
 
