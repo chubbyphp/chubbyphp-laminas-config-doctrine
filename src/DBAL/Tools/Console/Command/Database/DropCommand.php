@@ -17,9 +17,16 @@ final class DropCommand extends Command
     private const RETURN_CODE_NOT_DROP = 1;
     private const RETURN_CODE_NO_FORCE = 2;
 
-    public function __construct(private ConnectionProvider $connectionProvider)
+    /**
+     * @param \Closure(array $params): Connection $postParse
+     */
+    private null|\Closure $connectionFactory;
+
+    public function __construct(private ConnectionProvider $connectionProvider, null|\Closure $connectionFactory = null)
     {
         parent::__construct();
+
+        $this->connectionFactory = $connectionFactory ?? static fn (array $params) => DriverManager::getConnection($params);
     }
 
     protected function configure(): void
@@ -53,18 +60,18 @@ final class DropCommand extends Command
         unset($params['dbname'], $params['path'], $params['url']);
 
         $connection->close();
-        $connection = DriverManager::getConnection($params);
+        $tmpConnection = ($this->connectionFactory)($params);
 
         $ifExists = $input->getOption('if-exists');
 
-        $shouldDropDatabase = !$ifExists || \in_array($dbName, $connection->createSchemaManager()->listDatabases(), true);
+        $shouldDropDatabase = !$ifExists || \in_array($dbName, $tmpConnection->createSchemaManager()->listDatabases(), true);
 
         // Only quote if we don't have a path
         if (!$isPath) {
-            $dbName = $connection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
+            $dbName = $tmpConnection->getDatabasePlatform()->quoteSingleIdentifier($dbName);
         }
 
-        return $this->dropDatabase($output, $connection, $dbName, $shouldDropDatabase);
+        return $this->dropDatabase($output, $tmpConnection, $dbName, $shouldDropDatabase);
     }
 
     private function getConnection(InputInterface $input): Connection

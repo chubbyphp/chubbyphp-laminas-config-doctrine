@@ -8,7 +8,8 @@ use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\DropCo
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
 use Doctrine\DBAL\Connection;
-use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Tools\Console\ConnectionProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -24,18 +25,11 @@ final class DropCommandTest extends TestCase
 {
     use MockByCallsTrait;
 
-    public function testExecuteSqliteWithoutName(): void
+    public function testExecuteFakeSqliteWithoutName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
         $path = sys_get_temp_dir().'/'.$dbName.'.db';
-
-        $setupConnection = DriverManager::getConnection([
-            'driver' => 'pdo_sqlite',
-            'path' => $path,
-        ]);
-
-        $setupConnection->createSchemaManager()->createDatabase($path);
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -51,20 +45,30 @@ final class DropCommandTest extends TestCase
             Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('dropDatabase')->with($path),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        ]);
+
         $input = new ArrayInput([
             '--force' => true,
         ]);
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(str_replace('dbname', $path, 'Dropped database dbname.'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecuteSqliteWithoutNameAndMissingForce(): void
+    public function testExecuteFakeSqliteWithoutNameAndMissingForce(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
@@ -83,10 +87,13 @@ final class DropCommandTest extends TestCase
             Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(2, $command->run($input, $output));
 
@@ -102,7 +109,7 @@ final class DropCommandTest extends TestCase
         self::assertSame(str_replace('sample', $dbName, $message), $output->fetch());
     }
 
-    public function testExecuteSqliteWithMissingPath(): void
+    public function testExecuteFakeSqliteWithMissingPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage(
@@ -121,36 +128,52 @@ final class DropCommandTest extends TestCase
             Call::create('getDefaultConnection')->with()->willReturn($connection),
         ]);
 
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class);
+
         $input = new ArrayInput([]);
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         $command->run($input, $output);
     }
 
-    public function testExecutePgsqlWithName(): void
+    public function testExecuteFakePgsqlWithName(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $setupConnection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'url' => getenv('POSTGRES_URL')
-                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-        ]);
-
-        $setupConnection->createSchemaManager()->createDatabase('"'.$dbName.'"');
-
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'url' => getenv('POSTGRES_URL')
-                ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-            'dbname' => $dbName,
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
+            Call::create('close'),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
         $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
             Call::create('getConnection')->with('name')->willReturn($connection),
+        ]);
+
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('dropDatabase')->with('"'.$dbName.'"'),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
         ]);
 
         $input = new ArrayInput([
@@ -160,29 +183,48 @@ final class DropCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(0, $command->run($input, $output));
 
         self::assertSame(str_replace('dbname', $dbName, 'Dropped database "dbname".'.PHP_EOL), $output->fetch());
     }
 
-    public function testExecutePgsqlWithNameAndMissingDatabaseIfExists(): void
+    public function testExecuteFakePgsqlWithNameAndMissingDatabaseIfExists(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'primary' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
+            Call::create('close'),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
         $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
             Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('listDatabases')->with()->willReturn([]),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
         ]);
 
         $input = new ArrayInput([
@@ -192,7 +234,7 @@ final class DropCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(0, $command->run($input, $output));
 
@@ -202,22 +244,42 @@ final class DropCommandTest extends TestCase
         );
     }
 
-    public function testExecutePgsqlWithNameAndMissingDatabase(): void
+    public function testExecuteFakePgsqlWithNameAndMissingDatabase(): void
     {
         $dbName = sprintf('sample-%s', uniqid());
 
-        $connection = DriverManager::getConnection([
-            'driver' => 'pdo_pgsql',
-            'primary' => [
-                'url' => getenv('POSTGRES_URL')
-                    ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                'dbname' => $dbName,
-            ],
+        /** @var Connection|MockObject $connection */
+        $connection = $this->getMockByCalls(Connection::class, [
+            Call::create('getParams')->with()->willReturn([
+                'driver' => 'pdo_pgsql',
+                'primary' => [
+                    'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
+                    'dbname' => $dbName,
+                ],
+            ]),
+            Call::create('close'),
         ]);
 
         /** @var ConnectionProvider|MockObject $connectionProvider */
         $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
             Call::create('getDefaultConnection')->with()->willReturn($connection),
+        ]);
+
+        /** @var AbstractPlatform|MockObject $databasePlatform */
+        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
+            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        ]);
+
+        /** @var AbstractSchemaManager|MockObject $schemaManager */
+        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
+            Call::create('dropDatabase')->with('"'.$dbName.'"')
+                ->willThrowException(new \Exception('An exception occurred while executing a query: SQLSTATE[3D000]: Invalid catalog name: 7 ERROR:  database "'.$dbName.'" does not exist')),
+        ]);
+
+        /** @var Connection|MockObject $tmpConnection */
+        $tmpConnection = $this->getMockByCalls(Connection::class, [
+            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
+            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
         ]);
 
         $input = new ArrayInput([
@@ -226,7 +288,7 @@ final class DropCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $command = new DropCommand($connectionProvider);
+        $command = new DropCommand($connectionProvider, static fn (array $params) => $tmpConnection);
 
         self::assertSame(1, $command->run($input, $output));
 
