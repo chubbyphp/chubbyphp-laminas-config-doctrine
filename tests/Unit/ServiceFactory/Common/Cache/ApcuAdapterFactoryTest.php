@@ -35,6 +35,26 @@ final class ApcuAdapterFactoryTest extends TestCase
         self::assertInstanceOf(ApcuAdapter::class, $service);
     }
 
+    public function testInvokeWithEmptyConfig(): void
+    {
+        /** @var ContainerInterface $container */
+        $container = $this->getMockByCalls(ContainerInterface::class, [
+            Call::create('get')->with('config')->willReturn([
+                'doctrine' => [
+                    'cache' => [
+                        'apcu' => [],
+                    ],
+                ],
+            ]),
+        ]);
+
+        $factory = new ApcuAdapterFactory();
+
+        $service = $factory($container);
+
+        self::assertInstanceOf(ApcuAdapter::class, $service);
+    }
+
     public function testInvoke(): void
     {
         /** @var MarshallerInterface $marshaller */
