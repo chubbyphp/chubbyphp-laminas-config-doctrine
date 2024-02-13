@@ -1,6 +1,5 @@
 .DS_Store
 .idea/
-.phpunit.cache
 .vscode/
 build/
 composer.lock
