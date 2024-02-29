@@ -20,9 +20,9 @@ final class DropCommand extends Command
     /**
      * @param \Closure(array $params): Connection $postParse
      */
-    private null|\Closure $connectionFactory;
+    private ?\Closure $connectionFactory;
 
-    public function __construct(private ConnectionProvider $connectionProvider, null|\Closure $connectionFactory = null)
+    public function __construct(private ConnectionProvider $connectionProvider, ?\Closure $connectionFactory = null)
     {
         parent::__construct();
 
