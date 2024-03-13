@@ -32,7 +32,7 @@ jobs:
           while ! nc -z localhost 27017; do sleep 0.1; done
           while ! nc -z localhost 5432; do sleep 0.1; done
       - name: composer test
-        uses: docker://chubbyphp/ci-php81:latest
+        uses: docker://ghcr.io/chubbyphp/ci-php81:latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"
@@ -64,7 +64,7 @@ jobs:
           while ! nc -z localhost 27017; do sleep 0.1; done
           while ! nc -z localhost 5432; do sleep 0.1; done
       - name: composer test
-        uses: docker://chubbyphp/ci-php82:latest
+        uses: docker://ghcr.io/chubbyphp/ci-php82:latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"
@@ -96,7 +96,7 @@ jobs:
           while ! nc -z localhost 27017; do sleep 0.1; done
           while ! nc -z localhost 5432; do sleep 0.1; done
       - name: composer test
-        uses: docker://chubbyphp/ci-php83:latest
+        uses: docker://ghcr.io/chubbyphp/ci-php83:latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"
