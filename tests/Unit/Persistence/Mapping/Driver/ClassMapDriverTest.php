@@ -36,7 +36,7 @@ final class ClassMapDriverTest extends TestCase
 
     public function testLoadMetadataForClassWithExistingMapping(): void
     {
-        $modelMapping = new class() implements ClassMapMappingInterface {
+        $modelMapping = new class implements ClassMapMappingInterface {
             public function configureMapping(ClassMetadata $metadata): void
             {
                 Assert::assertSame('name', $metadata->getName());

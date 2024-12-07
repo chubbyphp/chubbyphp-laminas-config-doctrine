@@ -40,7 +40,7 @@ final class DocumentManagerCommand extends Command
         try {
             $documentManager = $this->container->get(DocumentManager::class.$documentManagerName);
         } catch (NotFoundExceptionInterface $serviceNotFoundException) {
-            throw new \InvalidArgumentException(sprintf('Missing document manager with name "%s"', $documentManagerName), $serviceNotFoundException->getCode(), $serviceNotFoundException);
+            throw new \InvalidArgumentException(\sprintf('Missing document manager with name "%s"', $documentManagerName), $serviceNotFoundException->getCode(), $serviceNotFoundException);
         }
 
         $this->command->setHelperSet(new HelperSet([

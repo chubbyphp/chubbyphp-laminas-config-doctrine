@@ -26,7 +26,7 @@ final class CreateCommandTest extends TestCase
 
     public function testExecuteFakeSqlite(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         $path = sys_get_temp_dir().'/'.$dbName.'.db';
 
@@ -90,7 +90,7 @@ final class CreateCommandTest extends TestCase
 
     public function testExecuteFakePgsql(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -138,7 +138,7 @@ final class CreateCommandTest extends TestCase
 
     public function testExecuteFakePgsqlDbExists(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -191,7 +191,7 @@ final class CreateCommandTest extends TestCase
 
     public function testExecuteFakePgsqlDbExistsAndIfNotExistsTrue(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [

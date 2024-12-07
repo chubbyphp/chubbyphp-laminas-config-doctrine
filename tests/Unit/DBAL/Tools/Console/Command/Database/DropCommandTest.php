@@ -27,7 +27,7 @@ final class DropCommandTest extends TestCase
 
     public function testExecuteFakeSqliteWithoutName(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         $path = sys_get_temp_dir().'/'.$dbName.'.db';
 
@@ -70,7 +70,7 @@ final class DropCommandTest extends TestCase
 
     public function testExecuteFakeSqliteWithoutNameAndMissingForce(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         $path = sys_get_temp_dir().'/'.$dbName.'.db';
 
@@ -141,7 +141,7 @@ final class DropCommandTest extends TestCase
 
     public function testExecuteFakePgsqlWithName(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -192,7 +192,7 @@ final class DropCommandTest extends TestCase
 
     public function testExecuteFakePgsqlWithNameAndMissingDatabaseIfExists(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [
@@ -246,7 +246,7 @@ final class DropCommandTest extends TestCase
 
     public function testExecuteFakePgsqlWithNameAndMissingDatabase(): void
     {
-        $dbName = sprintf('sample-%s', uniqid());
+        $dbName = \sprintf('sample-%s', uniqid());
 
         /** @var Connection|MockObject $connection */
         $connection = $this->getMockByCalls(Connection::class, [

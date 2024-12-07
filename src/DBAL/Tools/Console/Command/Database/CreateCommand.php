@@ -17,9 +17,9 @@ final class CreateCommand extends Command
     private const RETURN_CODE_NOT_CREATE = 1;
 
     /**
-     * @param \Closure(array $params): Connection $postParse
+     * @var \Closure(array<mixed>): Connection
      */
-    private ?\Closure $connectionFactory;
+    private \Closure $connectionFactory;
 
     public function __construct(private ConnectionProvider $connectionProvider, ?\Closure $connectionFactory = null)
     {
@@ -116,17 +116,17 @@ final class CreateCommand extends Command
         try {
             if ($shouldNotCreateDatabase) {
                 $output->writeln(
-                    sprintf('<info>Database <comment>%s</comment> already exists. Skipped.</info>', $dbName)
+                    \sprintf('<info>Database <comment>%s</comment> already exists. Skipped.</info>', $dbName)
                 );
             } else {
                 $tmpConnection->createSchemaManager()->createDatabase($dbName);
-                $output->writeln(sprintf('<info>Created database <comment>%s</comment>.</info>', $dbName));
+                $output->writeln(\sprintf('<info>Created database <comment>%s</comment>.</info>', $dbName));
             }
 
             return 0;
         } catch (\Exception $exception) {
-            $output->writeln(sprintf('<error>Could not create database <comment>%s</comment>.</error>', $dbName));
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+            $output->writeln(\sprintf('<error>Could not create database <comment>%s</comment>.</error>', $dbName));
+            $output->writeln(\sprintf('<error>%s</error>', $exception->getMessage()));
 
             return self::RETURN_CODE_NOT_CREATE;
         }

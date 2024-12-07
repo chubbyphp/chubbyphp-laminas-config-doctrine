@@ -145,9 +145,9 @@ final class DocumentManagerCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
-        $exception = new class() extends \Exception implements NotFoundExceptionInterface {};
+        $exception = new class extends \Exception implements NotFoundExceptionInterface {};
 
-        $command = new class() extends Command {
+        $command = new class extends Command {
             protected function configure(): void
             {
                 $this

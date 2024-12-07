@@ -44,7 +44,7 @@ final class EventManagerFactoryTest extends TestCase
     {
         $listener = new \stdClass();
 
-        $subscriber = new class() implements EventSubscriber {
+        $subscriber = new class implements EventSubscriber {
             public function getSubscribedEvents()
             {
                 return [
@@ -95,7 +95,7 @@ final class EventManagerFactoryTest extends TestCase
     {
         $listener = new \stdClass();
 
-        $subscriber = new class() implements EventSubscriber {
+        $subscriber = new class implements EventSubscriber {
             public function getSubscribedEvents()
             {
                 return [

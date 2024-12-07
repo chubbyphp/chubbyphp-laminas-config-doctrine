@@ -23,7 +23,7 @@ final class ClassMapDriver implements MappingDriver
     public function loadMetadataForClass($className, ClassMetadata $metadata): void
     {
         if (!isset($this->map[$className])) {
-            throw new MappingException(sprintf("Missing mapping for class '%s'", $className));
+            throw new MappingException(\sprintf("Missing mapping for class '%s'", $className));
         }
 
         $mappingClassName = $this->map[$className];

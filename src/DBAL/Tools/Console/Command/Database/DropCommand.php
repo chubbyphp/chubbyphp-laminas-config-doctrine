@@ -18,9 +18,9 @@ final class DropCommand extends Command
     private const RETURN_CODE_NO_FORCE = 2;
 
     /**
-     * @param \Closure(array $params): Connection $postParse
+     * @var \Closure(array<mixed>): Connection
      */
-    private ?\Closure $connectionFactory;
+    private \Closure $connectionFactory;
 
     public function __construct(private ConnectionProvider $connectionProvider, ?\Closure $connectionFactory = null)
     {
@@ -121,7 +121,7 @@ final class DropCommand extends Command
             '<error>ATTENTION:</error> This operation should not be executed in a production environment.'
         );
         $output->writeln('');
-        $output->writeln(sprintf('<info>Would drop the database <comment>%s</comment>.</info>', $dbName));
+        $output->writeln(\sprintf('<info>Would drop the database <comment>%s</comment>.</info>', $dbName));
         $output->writeln('Please run the operation with --force to execute');
         $output->writeln('<error>All data will be lost!</error>');
     }
@@ -135,15 +135,15 @@ final class DropCommand extends Command
         try {
             if ($shouldDropDatabase) {
                 $connection->createSchemaManager()->dropDatabase($dbName);
-                $output->writeln(sprintf('<info>Dropped database <comment>%s</comment>.</info>', $dbName));
+                $output->writeln(\sprintf('<info>Dropped database <comment>%s</comment>.</info>', $dbName));
             } else {
                 $output->writeln(
-                    sprintf('<info>Database <comment>%s</comment> doesn\'t exist. Skipped.</info>', $dbName)
+                    \sprintf('<info>Database <comment>%s</comment> doesn\'t exist. Skipped.</info>', $dbName)
                 );
             }
         } catch (\Exception $exception) {
-            $output->writeln(sprintf('<error>Could not drop database <comment>%s</comment>.</error>', $dbName));
-            $output->writeln(sprintf('<error>%s</error>', $exception->getMessage()));
+            $output->writeln(\sprintf('<error>Could not drop database <comment>%s</comment>.</error>', $dbName));
+            $output->writeln(\sprintf('<error>%s</error>', $exception->getMessage()));
 
             return self::RETURN_CODE_NOT_DROP;
         }
