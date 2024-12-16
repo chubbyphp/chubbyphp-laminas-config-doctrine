@@ -53,7 +53,7 @@ and the possiblity to install only the needed vendors make the difference to the
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.2"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.3"
 ```
 
 ## Usage
