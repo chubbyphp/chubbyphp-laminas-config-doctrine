@@ -43,9 +43,9 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^3.9.3
+ * [doctrine/dbal][20]: ^4.2.1
  * [doctrine/mongodb-odm][21]: ^2.9.0
- * [doctrine/orm][22]: ^2.20
+ * [doctrine/orm][22]: ^3.3
  * [mongodb/mongodb][23]: ^1.20
 
 ## Installation
@@ -53,7 +53,7 @@ and the possiblity to install only the needed vendors make the difference to the
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.3"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.0"
 ```
 
 ## Usage
