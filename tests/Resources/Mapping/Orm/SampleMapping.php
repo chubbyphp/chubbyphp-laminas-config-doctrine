@@ -16,8 +16,6 @@ final class SampleMapping implements ClassMapMappingInterface
      */
     public function configureMapping(ClassMetadata $metadata): void
     {
-        $metadata->setPrimaryTable(['name' => 'sample']);
-
         $builder = new ClassMetadataBuilder($metadata);
         $builder->setTable('sample');
         $builder->createField('id', 'guid')->makePrimaryKey()->build();

@@ -82,9 +82,6 @@ final class EntityManagerTest extends TestCase
 
         $container = $factory(new Config($config));
 
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $container->get(EntityManagerInterface::class);
-
         /** @var ConnectionProvider $connectionProvider */
         $connectionProvider = $container->get(ConnectionProvider::class);
 
@@ -101,6 +98,8 @@ final class EntityManagerTest extends TestCase
 
         $sample = new Sample();
         $sample->setName('name');
+
+        $entityManager = $entityManagerProvider->getDefaultManager();
 
         $entityManager->persist($sample);
         $entityManager->flush();
