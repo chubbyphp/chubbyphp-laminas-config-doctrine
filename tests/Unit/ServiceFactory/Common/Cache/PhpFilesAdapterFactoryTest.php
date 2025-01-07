@@ -10,7 +10,6 @@ use Chubbyphp\Mock\MockByCallsTrait;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
-use Symfony\Component\Cache\Marshaller\MarshallerInterface;
 
 /**
  * @covers \Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\PhpFilesAdapterFactory
@@ -37,9 +36,6 @@ final class PhpFilesAdapterFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
-        /** @var MarshallerInterface $marshaller */
-        $marshaller = $this->getMockByCalls(MarshallerInterface::class);
-
         /** @var ContainerInterface $container */
         $container = $this->getMockByCalls(ContainerInterface::class, [
             Call::create('get')->with('config')->willReturn([
@@ -65,9 +61,6 @@ final class PhpFilesAdapterFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
-        /** @var MarshallerInterface $marshaller */
-        $marshaller = $this->getMockByCalls(MarshallerInterface::class);
-
         /** @var ContainerInterface $container */
         $container = $this->getMockByCalls(ContainerInterface::class, [
             Call::create('get')->with('config')->willReturn([
