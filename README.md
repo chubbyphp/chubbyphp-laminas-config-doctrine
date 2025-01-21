@@ -70,7 +70,7 @@ composer require chubbyphp/chubbyphp-laminas-config-doctrine "^2.3"
 
 ## Copyright
 
-2024 Dominik Zogg
+2025 Dominik Zogg
 
 [1]: https://packagist.org/packages/chubbyphp/chubbyphp-laminas-config-doctrine
 
