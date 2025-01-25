@@ -34,18 +34,18 @@ and the possiblity to install only the needed vendors make the difference to the
 ## Requirements
 
  * php: 8.2
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.3
- * [doctrine/common][11]: ^3.4.5
- * [doctrine/event-manager][12]: ^1.2|^2.0.1
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.4
+ * [doctrine/common][11]: ^3.5
+ * [doctrine/event-manager][12]: ^2.0.1
  * [psr/container][13]: ^1.1.2|^2.0.2
  * [symfony/cache][14]: ^5.4.46|^6.4.14|^7.2
  * [symfony/console][14]: ^5.4.46|^6.4.14|^7.2
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^3.9.3
- * [doctrine/mongodb-odm][21]: ^2.9.0
- * [doctrine/orm][22]: ^2.20
+ * [doctrine/dbal][20]: ^3.9.4
+ * [doctrine/mongodb-odm][21]: ^2.10
+ * [doctrine/orm][22]: ^2.20.1
  * [mongodb/mongodb][23]: ^1.20
 
 ## Installation

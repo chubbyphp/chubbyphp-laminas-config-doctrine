@@ -14,7 +14,6 @@ use Doctrine\ODM\MongoDB\Mapping\ClassMetadataFactory;
 use Doctrine\ODM\MongoDB\Repository\RepositoryFactory;
 use MongoDB\Client;
 use PHPUnit\Framework\TestCase;
-use ProxyManager\Factory\LazyLoadingGhostFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
 
@@ -35,20 +34,21 @@ final class DocumentManagerFactoryTest extends TestCase
         /** @var CacheItemPoolInterface $cache */
         $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
 
-        /** @var LazyLoadingGhostFactory $lazyLoadingGhostFactory */
-        $lazyLoadingGhostFactory = $this->getMockByCalls(LazyLoadingGhostFactory::class);
-
         /** @var RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
 
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
             Call::create('getMetadataCache')->with()->willReturn($cache),
             Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
             Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
             Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('buildGhostObjectFactory')->with()->willReturn($lazyLoadingGhostFactory),
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
+            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
+            Call::create('getProxyNamespace')->with()->willReturn('DoctrineMongoDBODMProxy'),
+            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
         ]);
 
@@ -80,20 +80,21 @@ final class DocumentManagerFactoryTest extends TestCase
         /** @var CacheItemPoolInterface $cache */
         $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
 
-        /** @var LazyLoadingGhostFactory $lazyLoadingGhostFactory */
-        $lazyLoadingGhostFactory = $this->getMockByCalls(LazyLoadingGhostFactory::class);
-
         /** @var RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
 
         /** @var Configuration $configuration */
         $configuration = $this->getMockByCalls(Configuration::class, [
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
             Call::create('getMetadataCache')->with()->willReturn($cache),
             Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
             Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
             Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('buildGhostObjectFactory')->with()->willReturn($lazyLoadingGhostFactory),
+            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
+            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
+            Call::create('getProxyNamespace')->with()->willReturn('DoctrineMongoDBODMProxy'),
+            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
         ]);
 
