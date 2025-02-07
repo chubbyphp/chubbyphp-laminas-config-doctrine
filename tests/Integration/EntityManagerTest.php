@@ -17,6 +17,7 @@ use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Mapping\Orm\SampleMapping;
 use Chubbyphp\Tests\Laminas\Config\Doctrine\Resources\Model\Sample;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Tools\Console\ConnectionProvider;
+use Doctrine\DBAL\Tools\DsnParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand as SchemaUpdateCommand;
 use Doctrine\ORM\Tools\Console\EntityManagerProvider;
@@ -35,6 +36,11 @@ final class EntityManagerTest extends TestCase
 {
     public function test(): void
     {
+        $dsnParser = new DsnParser();
+        $connectionParams = $dsnParser
+            ->parse(getenv('POSTGRES_URL') ?: 'pgsql://root:root@localhost:5432?charset=UTF8')
+        ;
+
         $config = [
             'dependencies' => [
                 'factories' => [
@@ -54,10 +60,8 @@ final class EntityManagerTest extends TestCase
                 ],
                 'dbal' => [
                     'connection' => [
-                        'driver' => 'pdo_pgsql',
-                        'url' => getenv('POSTGRES_URL')
-                            ? getenv('POSTGRES_URL') : 'pgsql://root:root@localhost:5432?charset=utf8',
-                        'dbname' => 'sample',
+                        ...$connectionParams,
+                        'dbname' => $connectionParams['dbname'] ?? 'sample',
                     ],
                 ],
                 'driver' => [
@@ -82,9 +86,6 @@ final class EntityManagerTest extends TestCase
 
         $container = $factory(new Config($config));
 
-        /** @var EntityManagerInterface $entityManager */
-        $entityManager = $container->get(EntityManagerInterface::class);
-
         /** @var ConnectionProvider $connectionProvider */
         $connectionProvider = $container->get(ConnectionProvider::class);
 
@@ -101,6 +102,8 @@ final class EntityManagerTest extends TestCase
 
         $sample = new Sample();
         $sample->setName('name');
+
+        $entityManager = $entityManagerProvider->getDefaultManager();
 
         $entityManager->persist($sample);
         $entityManager->flush();

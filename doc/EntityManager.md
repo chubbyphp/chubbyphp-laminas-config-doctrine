@@ -10,11 +10,15 @@ use Chubbyphp\Laminas\Config\ContainerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
+use Doctrine\DBAL\Tools\DsnParser;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use MyProject\Mapping\Orm\SampleMapping;
 use MyProject\Model\Sample;
 use Psr\Cache\CacheItemPoolInterface;
+
+$dsnParser = new DsnParser();
+$connectionParams = $dsnParser->parse('pgsql://root:root@localhost:5432/sample?charset=utf8');
 
 $config = [
     'dependencies' => [
@@ -31,10 +35,7 @@ $config = [
             ],
         ],
         'dbal' => [
-            'connection' => [
-                'driver' => 'pdo_pgsql',
-                'url' => 'pgsql://root:root@localhost:5432/sample?charset=utf8',
-            ],
+            'connection' => $connectionParams,
         ],
         'driver' => [
             'classMap' => [

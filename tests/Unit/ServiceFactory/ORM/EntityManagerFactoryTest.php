@@ -7,7 +7,6 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ORM;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
 use Chubbyphp\Mock\Call;
 use Chubbyphp\Mock\MockByCallsTrait;
-use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
@@ -35,15 +34,10 @@ final class EntityManagerFactoryTest extends TestCase
         $eventManager = $this->getMockByCalls(EventManager::class);
 
         /** @var Connection $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getEventManager')->with()->willReturn($eventManager),
-        ]);
+        $connection = $this->getMockByCalls(Connection::class);
 
         /** @var MappingDriver $mappingDriver */
         $mappingDriver = $this->getMockByCalls(MappingDriver::class);
-
-        /** @var Cache $cache */
-        $cache = $this->getMockByCalls(Cache::class);
 
         /** @var RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
@@ -56,14 +50,12 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
             Call::create('getMetadataCache')->with()->willReturn(null),
-            Call::create('getMetadataCacheImpl')->with()->willReturn($cache),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
             Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
             Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
             Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
             Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(false),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
         ]);
 
@@ -73,6 +65,8 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('get')->with(Connection::class)->willReturn($connection),
             Call::create('has')->with(Configuration::class)->willReturn(true),
             Call::create('get')->with(Configuration::class)->willReturn($configuration),
+            Call::create('has')->with(EventManager::class)->willReturn(true),
+            Call::create('get')->with(EventManager::class)->willReturn($eventManager),
         ]);
 
         $factory = new EntityManagerFactory();
@@ -88,15 +82,10 @@ final class EntityManagerFactoryTest extends TestCase
         $eventManager = $this->getMockByCalls(EventManager::class);
 
         /** @var Connection $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getEventManager')->with()->willReturn($eventManager),
-        ]);
+        $connection = $this->getMockByCalls(Connection::class);
 
         /** @var MappingDriver $mappingDriver */
         $mappingDriver = $this->getMockByCalls(MappingDriver::class);
-
-        /** @var Cache $cache */
-        $cache = $this->getMockByCalls(Cache::class);
 
         /** @var RepositoryFactory $repositoryFactory */
         $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
@@ -109,14 +98,12 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
             Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
             Call::create('getMetadataCache')->with()->willReturn(null),
-            Call::create('getMetadataCacheImpl')->with()->willReturn($cache),
             Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
             Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
             Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
             Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
             Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(false),
             Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
         ]);
 
@@ -126,6 +113,8 @@ final class EntityManagerFactoryTest extends TestCase
             Call::create('get')->with(Connection::class.'default')->willReturn($connection),
             Call::create('has')->with(Configuration::class.'default')->willReturn(true),
             Call::create('get')->with(Configuration::class.'default')->willReturn($configuration),
+            Call::create('has')->with(EventManager::class.'default')->willReturn(true),
+            Call::create('get')->with(EventManager::class.'default')->willReturn($eventManager),
         ]);
 
         $factory = [EntityManagerFactory::class, 'default'];
