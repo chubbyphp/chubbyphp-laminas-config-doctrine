@@ -28,7 +28,7 @@
         "doctrine/event-manager": "^2.0.1",
         "psr/container": "^1.1.2|^2.0.2",
         "symfony/cache": "^5.4.46|^6.4.18|^7.2.3",
-        "symfony/console": "^5.4.46|^6.4.18|^7.2.3"
+        "symfony/console": "^5.4.47|^6.4.17|^7.2.1"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
