@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ODM\MongoDB;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\ConfigurationFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
@@ -19,16 +19,16 @@ use Psr\Container\ContainerInterface;
  */
 final class ConfigurationFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'mongodbOdm' => [
                         'configuration' => [
@@ -42,12 +42,12 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('filter')->willReturn(false),
-            Call::create('has')->with('className')->willReturn(false),
-            Call::create('has')->with(MappingDriver::class)->willReturn(true),
-            Call::create('get')->with(MappingDriver::class)->willReturn($mappingDriver),
-            Call::create('has')->with('/tmp/doctrine/mongodbOdm/proxies')->willReturn(false),
-            Call::create('has')->with('DoctrineMongoDBODMProxy')->willReturn(false),
+            new WithReturn('has', ['filter'], false),
+            new WithReturn('has', ['className'], false),
+            new WithReturn('has', [MappingDriver::class], true),
+            new WithReturn('get', [MappingDriver::class], $mappingDriver),
+            new WithReturn('has', ['/tmp/doctrine/mongodbOdm/proxies'], false),
+            new WithReturn('has', ['DoctrineMongoDBODMProxy'], false),
         ]);
 
         $factory = new ConfigurationFactory();
@@ -62,12 +62,14 @@ final class ConfigurationFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'mongodbOdm' => [
                         'configuration' => [
@@ -83,12 +85,12 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('filter')->willReturn(false),
-            Call::create('has')->with('className')->willReturn(false),
-            Call::create('has')->with(MappingDriver::class)->willReturn(true),
-            Call::create('get')->with(MappingDriver::class)->willReturn($mappingDriver),
-            Call::create('has')->with('/tmp/doctrine/mongodbOdm/proxies')->willReturn(false),
-            Call::create('has')->with('DoctrineMongoDBODMProxy')->willReturn(false),
+            new WithReturn('has', ['filter'], false),
+            new WithReturn('has', ['className'], false),
+            new WithReturn('has', [MappingDriver::class], true),
+            new WithReturn('get', [MappingDriver::class], $mappingDriver),
+            new WithReturn('has', ['/tmp/doctrine/mongodbOdm/proxies'], false),
+            new WithReturn('has', ['DoctrineMongoDBODMProxy'], false),
         ]);
 
         $factory = [ConfigurationFactory::class, 'default'];

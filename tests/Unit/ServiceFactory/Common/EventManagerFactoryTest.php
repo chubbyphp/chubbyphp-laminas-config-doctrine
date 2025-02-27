@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Common;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\EventManagerFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\ORM\Events;
@@ -20,13 +20,13 @@ use Psr\Container\ContainerInterface;
  */
 final class EventManagerFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvokeWithDefaults(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'eventManager' => [],
                 ],
@@ -42,6 +42,8 @@ final class EventManagerFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         $listener = new \stdClass();
 
         $subscriber = new class implements EventSubscriber {
@@ -54,8 +56,8 @@ final class EventManagerFactoryTest extends TestCase
         };
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'eventManager' => [
                         'listeners' => [
@@ -67,12 +69,12 @@ final class EventManagerFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with(Events::prePersist)->willReturn(false),
-            Call::create('has')->with('Listener')->willReturn(true),
-            Call::create('get')->with('Listener')->willReturn($listener),
-            Call::create('has')->with(EventSubscriber::class)->willReturn(true),
-            Call::create('get')->with(EventSubscriber::class)->willReturn($subscriber),
+            // Simulate resolveValue for string values
+            new WithReturn('has', [Events::prePersist], false),
+            new WithReturn('has', ['Listener'], true),
+            new WithReturn('get', ['Listener'], $listener),
+            new WithReturn('has', [EventSubscriber::class], true),
+            new WithReturn('get', [EventSubscriber::class], $subscriber),
         ]);
 
         $factory = new EventManagerFactory();
@@ -93,6 +95,8 @@ final class EventManagerFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         $listener = new \stdClass();
 
         $subscriber = new class implements EventSubscriber {
@@ -105,8 +109,8 @@ final class EventManagerFactoryTest extends TestCase
         };
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'eventManager' => [
                         'default' => [
@@ -120,12 +124,11 @@ final class EventManagerFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with(Events::prePersist)->willReturn(false),
-            Call::create('has')->with('Listener')->willReturn(true),
-            Call::create('get')->with('Listener')->willReturn($listener),
-            Call::create('has')->with(EventSubscriber::class)->willReturn(true),
-            Call::create('get')->with(EventSubscriber::class)->willReturn($subscriber),
+            new WithReturn('has', [Events::prePersist], false),
+            new WithReturn('has', ['Listener'], true),
+            new WithReturn('get', ['Listener'], $listener),
+            new WithReturn('has', [EventSubscriber::class], true),
+            new WithReturn('get', [EventSubscriber::class], $subscriber),
         ]);
 
         $factory = [EventManagerFactory::class, 'default'];

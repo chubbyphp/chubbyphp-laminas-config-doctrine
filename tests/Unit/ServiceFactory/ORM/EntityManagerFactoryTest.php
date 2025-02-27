@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ORM;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\EntityManagerFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Common\EventManager;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Doctrine\DBAL\Connection;
@@ -26,47 +26,47 @@ use Psr\Container\ContainerInterface;
  */
 final class EntityManagerFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var EventManager $eventManager */
-        $eventManager = $this->getMockByCalls(EventManager::class);
+        $eventManager = $builder->create(EventManager::class, []);
 
         /** @var Connection $connection */
-        $connection = $this->getMockByCalls(Connection::class);
+        $connection = $builder->create(Connection::class, []);
 
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var RepositoryFactory $repositoryFactory */
-        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+        $repositoryFactory = $builder->create(RepositoryFactory::class, []);
 
         /** @var DefaultEntityListenerResolver $entityListenerResolver */
-        $entityListenerResolver = $this->getMockByCalls(DefaultEntityListenerResolver::class);
+        $entityListenerResolver = $builder->create(DefaultEntityListenerResolver::class, []);
 
         /** @var Configuration $configuration */
-        $configuration = $this->getMockByCalls(Configuration::class, [
-            Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
-            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCache')->with()->willReturn(null),
-            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
-            Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
-            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
-            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
-            Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
-            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
-            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+        $configuration = $builder->create(Configuration::class, [
+            new WithReturn('getMetadataDriverImpl', [], $mappingDriver),
+            new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
+            new WithReturn('getMetadataCache', [], null),
+            new WithReturn('getRepositoryFactory', [], $repositoryFactory),
+            new WithReturn('getEntityListenerResolver', [], $entityListenerResolver),
+            new WithReturn('isSecondLevelCacheEnabled', [], false),
+            new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
+            new WithReturn('getProxyNamespace', [], 'DoctrineORMProxy'),
+            new WithReturn('getAutoGenerateProxyClasses', [], AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            new WithReturn('isSecondLevelCacheEnabled', [], false),
         ]);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('has')->with(Connection::class)->willReturn(true),
-            Call::create('get')->with(Connection::class)->willReturn($connection),
-            Call::create('has')->with(Configuration::class)->willReturn(true),
-            Call::create('get')->with(Configuration::class)->willReturn($configuration),
-            Call::create('has')->with(EventManager::class)->willReturn(true),
-            Call::create('get')->with(EventManager::class)->willReturn($eventManager),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('has', [Connection::class], true),
+            new WithReturn('get', [Connection::class], $connection),
+            new WithReturn('has', [Configuration::class], true),
+            new WithReturn('get', [Configuration::class], $configuration),
+            new WithReturn('has', [EventManager::class], true),
+            new WithReturn('get', [EventManager::class], $eventManager),
         ]);
 
         $factory = new EntityManagerFactory();
@@ -78,43 +78,45 @@ final class EntityManagerFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var EventManager $eventManager */
-        $eventManager = $this->getMockByCalls(EventManager::class);
+        $eventManager = $builder->create(EventManager::class, []);
 
         /** @var Connection $connection */
-        $connection = $this->getMockByCalls(Connection::class);
+        $connection = $builder->create(Connection::class, []);
 
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var RepositoryFactory $repositoryFactory */
-        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+        $repositoryFactory = $builder->create(RepositoryFactory::class, []);
 
         /** @var DefaultEntityListenerResolver $entityListenerResolver */
-        $entityListenerResolver = $this->getMockByCalls(DefaultEntityListenerResolver::class);
+        $entityListenerResolver = $builder->create(DefaultEntityListenerResolver::class, []);
 
         /** @var Configuration $configuration */
-        $configuration = $this->getMockByCalls(Configuration::class, [
-            Call::create('getMetadataDriverImpl')->with()->willReturn($mappingDriver),
-            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCache')->with()->willReturn(null),
-            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
-            Call::create('getEntityListenerResolver')->with()->willReturn($entityListenerResolver),
-            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
-            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
-            Call::create('getProxyNamespace')->with()->willReturn('DoctrineORMProxy'),
-            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(AbstractProxyFactory::AUTOGENERATE_ALWAYS),
-            Call::create('isSecondLevelCacheEnabled')->with()->willReturn(false),
+        $configuration = $builder->create(Configuration::class, [
+            new WithReturn('getMetadataDriverImpl', [], $mappingDriver),
+            new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
+            new WithReturn('getMetadataCache', [], null),
+            new WithReturn('getRepositoryFactory', [], $repositoryFactory),
+            new WithReturn('getEntityListenerResolver', [], $entityListenerResolver),
+            new WithReturn('isSecondLevelCacheEnabled', [], false),
+            new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
+            new WithReturn('getProxyNamespace', [], 'DoctrineORMProxy'),
+            new WithReturn('getAutoGenerateProxyClasses', [], AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            new WithReturn('isSecondLevelCacheEnabled', [], false),
         ]);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('has')->with(Connection::class.'default')->willReturn(true),
-            Call::create('get')->with(Connection::class.'default')->willReturn($connection),
-            Call::create('has')->with(Configuration::class.'default')->willReturn(true),
-            Call::create('get')->with(Configuration::class.'default')->willReturn($configuration),
-            Call::create('has')->with(EventManager::class.'default')->willReturn(true),
-            Call::create('get')->with(EventManager::class.'default')->willReturn($eventManager),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('has', [Connection::class.'default'], true),
+            new WithReturn('get', [Connection::class.'default'], $connection),
+            new WithReturn('has', [Configuration::class.'default'], true),
+            new WithReturn('get', [Configuration::class.'default'], $configuration),
+            new WithReturn('has', [EventManager::class.'default'], true),
+            new WithReturn('get', [EventManager::class.'default'], $eventManager),
         ]);
 
         $factory = [EntityManagerFactory::class, 'default'];

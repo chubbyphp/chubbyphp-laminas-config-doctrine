@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Common\Cache;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\PhpFilesAdapterFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
@@ -18,13 +18,13 @@ use Symfony\Component\Cache\Adapter\PhpFilesAdapter;
  */
 final class PhpFilesAdapterFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvokeWithDefaults(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([]),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], []),
         ]);
 
         $factory = new PhpFilesAdapterFactory();
@@ -36,9 +36,11 @@ final class PhpFilesAdapterFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'phpfiles' => [
@@ -61,9 +63,11 @@ final class PhpFilesAdapterFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'phpfiles' => [

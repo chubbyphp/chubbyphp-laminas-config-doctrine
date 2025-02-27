@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ORM;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ORM\ConfigurationFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\ORM\Configuration;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use PHPUnit\Framework\TestCase;
@@ -19,16 +19,16 @@ use Psr\Container\ContainerInterface;
  */
 final class ConfigurationFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'orm' => [
                         'configuration' => [
@@ -42,12 +42,12 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('filter')->willReturn(false),
-            Call::create('has')->with('className')->willReturn(false),
-            Call::create('has')->with(MappingDriver::class)->willReturn(true),
-            Call::create('get')->with(MappingDriver::class)->willReturn($mappingDriver),
-            Call::create('has')->with('/tmp/doctrine/orm/proxies')->willReturn(false),
-            Call::create('has')->with('DoctrineORMProxy')->willReturn(false),
+            new WithReturn('has', ['filter'], false),
+            new WithReturn('has', ['className'], false),
+            new WithReturn('has', [MappingDriver::class], true),
+            new WithReturn('get', [MappingDriver::class], $mappingDriver),
+            new WithReturn('has', ['/tmp/doctrine/orm/proxies'], false),
+            new WithReturn('has', ['DoctrineORMProxy'], false),
         ]);
 
         $factory = new ConfigurationFactory();
@@ -62,12 +62,14 @@ final class ConfigurationFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var MappingDriver $mappingDriver */
-        $mappingDriver = $this->getMockByCalls(MappingDriver::class);
+        $mappingDriver = $builder->create(MappingDriver::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'orm' => [
                         'configuration' => [
@@ -83,12 +85,12 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('filter')->willReturn(false),
-            Call::create('has')->with('className')->willReturn(false),
-            Call::create('has')->with(MappingDriver::class)->willReturn(true),
-            Call::create('get')->with(MappingDriver::class)->willReturn($mappingDriver),
-            Call::create('has')->with('/tmp/doctrine/orm/proxies')->willReturn(false),
-            Call::create('has')->with('DoctrineORMProxy')->willReturn(false),
+            new WithReturn('has', ['filter'], false),
+            new WithReturn('has', ['className'], false),
+            new WithReturn('has', [MappingDriver::class], true),
+            new WithReturn('get', [MappingDriver::class], $mappingDriver),
+            new WithReturn('has', ['/tmp/doctrine/orm/proxies'], false),
+            new WithReturn('has', ['DoctrineORMProxy'], false),
         ]);
 
         $factory = [ConfigurationFactory::class, 'default'];

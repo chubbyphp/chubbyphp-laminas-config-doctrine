@@ -6,8 +6,8 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\Persistence\Mapping\Drive
 
 use Chubbyphp\Laminas\Config\Doctrine\Persistence\Mapping\Driver\ClassMapDriver;
 use Chubbyphp\Laminas\Config\Doctrine\Persistence\Mapping\Driver\ClassMapMappingInterface;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\Mapping\MappingException;
 use PHPUnit\Framework\Assert;
@@ -20,15 +20,15 @@ use PHPUnit\Framework\TestCase;
  */
 final class ClassMapDriverTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testLoadMetadataForClassWithoutExistingMapping(): void
     {
         $this->expectException(MappingException::class);
         $this->expectExceptionMessage("Missing mapping for class 'stdClass'");
 
+        $builder = new MockObjectBuilder();
+
         /** @var ClassMetadata $classMetadata */
-        $classMetadata = $this->getMockByCalls(ClassMetadata::class);
+        $classMetadata = $builder->create(ClassMetadata::class, []);
 
         $mappingDriver = new ClassMapDriver([]);
         $mappingDriver->loadMetadataForClass(\stdClass::class, $classMetadata);
@@ -43,9 +43,11 @@ final class ClassMapDriverTest extends TestCase
             }
         };
 
+        $builder = new MockObjectBuilder();
+
         /** @var ClassMetadata $classMetadata */
-        $classMetadata = $this->getMockByCalls(ClassMetadata::class, [
-            Call::create('getName')->with()->willReturn('name'),
+        $classMetadata = $builder->create(ClassMetadata::class, [
+            new WithReturn('getName', [], 'name'),
         ]);
 
         $mappingDriver = new ClassMapDriver([\stdClass::class => $modelMapping::class]);

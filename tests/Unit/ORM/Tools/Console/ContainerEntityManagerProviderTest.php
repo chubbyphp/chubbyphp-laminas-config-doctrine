@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ORM\Tools\Console;
 
 use Chubbyphp\Laminas\Config\Doctrine\ORM\Tools\Console\ContainerEntityManagerProvider;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\ORM\EntityManagerInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -19,16 +18,16 @@ use Psr\Container\ContainerInterface;
  */
 final class ContainerEntityManagerProviderTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testGetDefaultManager(): void
     {
-        /** @var EntityManagerInterface|MockObject $entityManager */
-        $entityManager = $this->getMockByCalls(EntityManagerInterface::class);
+        $builder = new MockObjectBuilder();
 
-        /** @var ContainerInterface|MockObject $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with(EntityManagerInterface::class)->willReturn($entityManager),
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $builder->create(EntityManagerInterface::class, []);
+
+        /** @var ContainerInterface $container */
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', [EntityManagerInterface::class], $entityManager),
         ]);
 
         $connectionProvider = new ContainerEntityManagerProvider($container);
@@ -38,12 +37,14 @@ final class ContainerEntityManagerProviderTest extends TestCase
 
     public function testGetManager(): void
     {
-        /** @var EntityManagerInterface|MockObject $entityManager */
-        $entityManager = $this->getMockByCalls(EntityManagerInterface::class);
+        $builder = new MockObjectBuilder();
 
-        /** @var ContainerInterface|MockObject $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with(EntityManagerInterface::class.'name')->willReturn($entityManager),
+        /** @var EntityManagerInterface $entityManager */
+        $entityManager = $builder->create(EntityManagerInterface::class, []);
+
+        /** @var ContainerInterface $container */
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', [EntityManagerInterface::class.'name'], $entityManager),
         ]);
 
         $connectionProvider = new ContainerEntityManagerProvider($container);

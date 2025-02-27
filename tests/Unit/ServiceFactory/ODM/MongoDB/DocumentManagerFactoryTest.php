@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ODM\MongoDB;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\DocumentManagerFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Common\EventManager;
 use Doctrine\ODM\MongoDB\Configuration;
 use Doctrine\ODM\MongoDB\DocumentManager;
@@ -24,45 +24,45 @@ use Psr\Container\ContainerInterface;
  */
 final class DocumentManagerFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var Client $client */
-        $client = $this->getMockByCalls(Client::class);
+        $client = $builder->create(Client::class, []);
 
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var RepositoryFactory $repositoryFactory */
-        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+        $repositoryFactory = $builder->create(RepositoryFactory::class, []);
 
         /** @var Configuration $configuration */
-        $configuration = $this->getMockByCalls(Configuration::class, [
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
-            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCache')->with()->willReturn($cache),
-            Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
-            Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
-            Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
-            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
-            Call::create('getProxyNamespace')->with()->willReturn('DoctrineMongoDBODMProxy'),
-            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
+        $configuration = $builder->create(Configuration::class, [
+            new WithReturn('isLazyGhostObjectEnabled', [], true),
+            new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
+            new WithReturn('getMetadataCache', [], $cache),
+            new WithReturn('getHydratorDir', [], '/tmp/doctrine/orm/hydrators'),
+            new WithReturn('getHydratorNamespace', [], 'DoctrineMongoDBODMHydrator'),
+            new WithReturn('getAutoGenerateHydratorClasses', [], Configuration::AUTOGENERATE_ALWAYS),
+            new WithReturn('isLazyGhostObjectEnabled', [], true),
+            new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
+            new WithReturn('getProxyNamespace', [], 'DoctrineMongoDBODMProxy'),
+            new WithReturn('getAutoGenerateProxyClasses', [], Configuration::AUTOGENERATE_ALWAYS),
+            new WithReturn('getRepositoryFactory', [], $repositoryFactory),
         ]);
 
         /** @var EventManager $eventManager */
-        $eventManager = $this->getMockByCalls(EventManager::class);
+        $eventManager = $builder->create(EventManager::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('has')->with(Client::class)->willReturn(true),
-            Call::create('get')->with(Client::class)->willReturn($client),
-            Call::create('has')->with(Configuration::class)->willReturn(true),
-            Call::create('get')->with(Configuration::class)->willReturn($configuration),
-            Call::create('has')->with(EventManager::class)->willReturn(true),
-            Call::create('get')->with(EventManager::class)->willReturn($eventManager),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('has', [Client::class], true),
+            new WithReturn('get', [Client::class], $client),
+            new WithReturn('has', [Configuration::class], true),
+            new WithReturn('get', [Configuration::class], $configuration),
+            new WithReturn('has', [EventManager::class], true),
+            new WithReturn('get', [EventManager::class], $eventManager),
         ]);
 
         $factory = new DocumentManagerFactory();
@@ -74,41 +74,43 @@ final class DocumentManagerFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var Client $client */
-        $client = $this->getMockByCalls(Client::class);
+        $client = $builder->create(Client::class, []);
 
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var RepositoryFactory $repositoryFactory */
-        $repositoryFactory = $this->getMockByCalls(RepositoryFactory::class);
+        $repositoryFactory = $builder->create(RepositoryFactory::class, []);
 
         /** @var Configuration $configuration */
-        $configuration = $this->getMockByCalls(Configuration::class, [
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
-            Call::create('getClassMetadataFactoryName')->with()->willReturn(ClassMetadataFactory::class),
-            Call::create('getMetadataCache')->with()->willReturn($cache),
-            Call::create('getHydratorDir')->with()->willReturn('/tmp/doctrine/orm/hydrators'),
-            Call::create('getHydratorNamespace')->with()->willReturn('DoctrineMongoDBODMHydrator'),
-            Call::create('getAutoGenerateHydratorClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('isLazyGhostObjectEnabled')->with()->willReturn(true),
-            Call::create('getProxyDir')->with()->willReturn('/tmp/doctrine/orm/proxies'),
-            Call::create('getProxyNamespace')->with()->willReturn('DoctrineMongoDBODMProxy'),
-            Call::create('getAutoGenerateProxyClasses')->with()->willReturn(Configuration::AUTOGENERATE_ALWAYS),
-            Call::create('getRepositoryFactory')->with()->willReturn($repositoryFactory),
+        $configuration = $builder->create(Configuration::class, [
+            new WithReturn('isLazyGhostObjectEnabled', [], true),
+            new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
+            new WithReturn('getMetadataCache', [], $cache),
+            new WithReturn('getHydratorDir', [], '/tmp/doctrine/orm/hydrators'),
+            new WithReturn('getHydratorNamespace', [], 'DoctrineMongoDBODMHydrator'),
+            new WithReturn('getAutoGenerateHydratorClasses', [], Configuration::AUTOGENERATE_ALWAYS),
+            new WithReturn('isLazyGhostObjectEnabled', [], true),
+            new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
+            new WithReturn('getProxyNamespace', [], 'DoctrineMongoDBODMProxy'),
+            new WithReturn('getAutoGenerateProxyClasses', [], Configuration::AUTOGENERATE_ALWAYS),
+            new WithReturn('getRepositoryFactory', [], $repositoryFactory),
         ]);
 
         /** @var EventManager $eventManager */
-        $eventManager = $this->getMockByCalls(EventManager::class);
+        $eventManager = $builder->create(EventManager::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('has')->with(Client::class.'default')->willReturn(true),
-            Call::create('get')->with(Client::class.'default')->willReturn($client),
-            Call::create('has')->with(Configuration::class.'default')->willReturn(true),
-            Call::create('get')->with(Configuration::class.'default')->willReturn($configuration),
-            Call::create('has')->with(EventManager::class.'default')->willReturn(true),
-            Call::create('get')->with(EventManager::class.'default')->willReturn($eventManager),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('has', [Client::class.'default'], true),
+            new WithReturn('get', [Client::class.'default'], $client),
+            new WithReturn('has', [Configuration::class.'default'], true),
+            new WithReturn('get', [Configuration::class.'default'], $configuration),
+            new WithReturn('has', [EventManager::class.'default'], true),
+            new WithReturn('get', [EventManager::class.'default'], $eventManager),
         ]);
 
         $factory = [DocumentManagerFactory::class, 'default'];

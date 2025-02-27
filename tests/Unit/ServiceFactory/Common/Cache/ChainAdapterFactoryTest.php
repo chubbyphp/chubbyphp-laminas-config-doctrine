@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Common\Cache;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ChainAdapterFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Container\ContainerInterface;
@@ -20,16 +20,16 @@ use Symfony\Component\Cache\Adapter\ChainAdapter;
  */
 final class ChainAdapterFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvokeWithDefaults(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'chain' => [
@@ -38,8 +38,9 @@ final class ChainAdapterFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with(ArrayAdapter::class)->willReturn(true),
-            Call::create('get')->with(ArrayAdapter::class)->willReturn($cache),
+            // Simulate service resolution: the container returns $cache for ArrayAdapter::class.
+            new WithReturn('has', [ArrayAdapter::class], true),
+            new WithReturn('get', [ArrayAdapter::class], $cache),
         ]);
 
         $factory = new ChainAdapterFactory();
@@ -51,12 +52,14 @@ final class ChainAdapterFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'chain' => [
@@ -66,8 +69,8 @@ final class ChainAdapterFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with(ArrayAdapter::class)->willReturn(true),
-            Call::create('get')->with(ArrayAdapter::class)->willReturn($cache),
+            new WithReturn('has', [ArrayAdapter::class], true),
+            new WithReturn('get', [ArrayAdapter::class], $cache),
         ]);
 
         $factory = new ChainAdapterFactory();
@@ -79,12 +82,14 @@ final class ChainAdapterFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'chain' => [
@@ -96,8 +101,8 @@ final class ChainAdapterFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with(ArrayAdapter::class)->willReturn(true),
-            Call::create('get')->with(ArrayAdapter::class)->willReturn($cache),
+            new WithReturn('has', [ArrayAdapter::class], true),
+            new WithReturn('get', [ArrayAdapter::class], $cache),
         ]);
 
         $factory = [ChainAdapterFactory::class, 'default'];

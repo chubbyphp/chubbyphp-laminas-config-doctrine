@@ -6,7 +6,7 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\ODM\MongoD
 
 use Chubbyphp\Laminas\Config\Doctrine\ODM\MongoDB\Tools\Console\Command\DocumentManagerCommand;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\Tools\Console\Command\ClearCache\MetadataCommandFactory;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\ODM\MongoDB\Tools\Console\Command\ClearCache\MetadataCommand;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -18,12 +18,12 @@ use Psr\Container\ContainerInterface;
  */
 final class MetadataCommandFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class);
+        $container = $builder->create(ContainerInterface::class, []);
 
         $factory = new MetadataCommandFactory();
 

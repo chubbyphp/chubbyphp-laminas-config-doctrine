@@ -6,8 +6,8 @@ namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Persistenc
 
 use Chubbyphp\Laminas\Config\Doctrine\Persistence\Mapping\Driver\ClassMapDriver;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 
@@ -18,13 +18,13 @@ use Psr\Container\ContainerInterface;
  */
 final class ClassMapDriverFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'classMap' => ['map' => ['class' => 'mappingClass']],
@@ -32,7 +32,7 @@ final class ClassMapDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('mappingClass')->willReturn(false),
+            new WithReturn('has', ['mappingClass'], false),
         ]);
 
         $factory = new ClassMapDriverFactory();
@@ -49,9 +49,11 @@ final class ClassMapDriverFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'classMap' => [
@@ -61,7 +63,7 @@ final class ClassMapDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('mappingClass')->willReturn(false),
+            new WithReturn('has', ['mappingClass'], false),
         ]);
 
         $factory = [ClassMapDriverFactory::class, 'default'];

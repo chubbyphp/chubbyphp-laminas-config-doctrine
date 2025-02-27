@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Common\Cache;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\MemcachedAdapterFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Cache\Adapter\MemcachedAdapter;
@@ -19,19 +19,19 @@ use Symfony\Component\Cache\Marshaller\MarshallerInterface;
  */
 final class MemcachedAdapterFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var \Memcached $client */
-        $client = $this->getMockByCalls(\Memcached::class);
+        $client = $builder->create(\Memcached::class, []);
 
         /** @var MarshallerInterface $marshaller */
-        $marshaller = $this->getMockByCalls(MarshallerInterface::class);
+        $marshaller = $builder->create(MarshallerInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'memcached' => [
@@ -43,10 +43,10 @@ final class MemcachedAdapterFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('client')->willReturn(true),
-            Call::create('get')->with('client')->willReturn($client),
-            Call::create('has')->with('marshaller')->willReturn(true),
-            Call::create('get')->with('marshaller')->willReturn($marshaller),
+            new WithReturn('has', ['client'], true),
+            new WithReturn('get', ['client'], $client),
+            new WithReturn('has', ['marshaller'], true),
+            new WithReturn('get', ['marshaller'], $marshaller),
         ]);
 
         $factory = new MemcachedAdapterFactory();
@@ -58,15 +58,17 @@ final class MemcachedAdapterFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var \Memcached $client */
-        $client = $this->getMockByCalls(\Memcached::class);
+        $client = $builder->create(\Memcached::class, []);
 
         /** @var MarshallerInterface $marshaller */
-        $marshaller = $this->getMockByCalls(MarshallerInterface::class);
+        $marshaller = $builder->create(MarshallerInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'cache' => [
                         'memcached' => [
@@ -80,10 +82,10 @@ final class MemcachedAdapterFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with('client')->willReturn(true),
-            Call::create('get')->with('client')->willReturn($client),
-            Call::create('has')->with('marshaller')->willReturn(true),
-            Call::create('get')->with('marshaller')->willReturn($marshaller),
+            new WithReturn('has', ['client'], true),
+            new WithReturn('get', ['client'], $client),
+            new WithReturn('has', ['marshaller'], true),
+            new WithReturn('get', ['marshaller'], $marshaller),
         ]);
 
         $factory = [MemcachedAdapterFactory::class, 'default'];
