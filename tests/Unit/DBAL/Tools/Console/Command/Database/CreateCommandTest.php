@@ -38,7 +38,6 @@ final class CreateCommandTest extends TestCase
                 'driver' => 'pdo_sqlite',
                 'path' => $path,
             ]),
-            new WithoutReturn('close', []),
         ]);
 
         /** @var ConnectionProvider $connectionProvider */
@@ -158,12 +157,11 @@ final class CreateCommandTest extends TestCase
                     'dbname' => $dbName,
                 ],
             ]),
-            new WithoutReturn('close', []),
         ]);
 
         /** @var ConnectionProvider $connectionProvider */
         $connectionProvider = $builder->create(ConnectionProvider::class, [
-            new WithReturn('getConnection', ['name'], $connection),
+            new WithReturn('getDefaultConnection', [], $connection),
         ]);
 
         /** @var AbstractPlatform $databasePlatform */

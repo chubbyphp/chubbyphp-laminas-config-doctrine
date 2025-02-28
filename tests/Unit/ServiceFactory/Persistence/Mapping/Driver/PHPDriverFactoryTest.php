@@ -60,7 +60,7 @@ final class PHPDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            new WithReturn('has', ['/path/to/mapping files'], false),
+            new WithReturn('has', ['/path/to/mapping/files'], false),
         ]);
 
         $factory = [PHPDriverFactory::class, 'default'];
