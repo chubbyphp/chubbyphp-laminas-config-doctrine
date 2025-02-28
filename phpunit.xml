@@ -8,10 +8,15 @@
     <testsuite name="Unit">
       <directory>./tests/Unit</directory>
     </testsuite>
- </testsuites>
+  </testsuites>
   <source>
     <include>
       <directory>./src</directory>
     </include>
   </source>
+  <extensions>
+    <bootstrap class="DG\BypassFinals\PHPUnitExtension">
+      <parameter name="bypassFinal" value="true"/>
+    </bootstrap>
+  </extensions>
 </phpunit>
