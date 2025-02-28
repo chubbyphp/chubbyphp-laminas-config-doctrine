@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Persistence\Mapping\Driver;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\PHPDriverFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Persistence\Mapping\Driver\PHPDriver;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -18,13 +18,13 @@ use Psr\Container\ContainerInterface;
  */
 final class PHPDriverFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'phpDriver' => ['locator' => '/path/to/mapping/files'],
@@ -32,7 +32,7 @@ final class PHPDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('/path/to/mapping/files')->willReturn(false),
+            new WithReturn('has', ['/path/to/mapping/files'], false),
         ]);
 
         $factory = new PHPDriverFactory();
@@ -46,9 +46,11 @@ final class PHPDriverFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'phpDriver' => [
@@ -58,7 +60,7 @@ final class PHPDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('/path/to/mapping/files')->willReturn(false),
+            new WithReturn('has', ['/path/to/mapping/files'], false),
         ]);
 
         $factory = [PHPDriverFactory::class, 'default'];

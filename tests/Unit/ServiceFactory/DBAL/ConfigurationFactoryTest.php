@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\DBAL;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\DBAL\ConfigurationFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\DBAL\Configuration;
 use PHPUnit\Framework\TestCase;
 use Psr\Cache\CacheItemPoolInterface;
@@ -19,16 +19,16 @@ use Psr\Container\ContainerInterface;
  */
 final class ConfigurationFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'dbal' => [
                         'configuration' => [
@@ -37,8 +37,8 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with(CacheItemPoolInterface::class)->willReturn(true),
-            Call::create('get')->with(CacheItemPoolInterface::class)->willReturn($cache),
+            new WithReturn('has', [CacheItemPoolInterface::class], true),
+            new WithReturn('get', [CacheItemPoolInterface::class], $cache),
         ]);
 
         $factory = new ConfigurationFactory();
@@ -50,12 +50,14 @@ final class ConfigurationFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var CacheItemPoolInterface $cache */
-        $cache = $this->getMockByCalls(CacheItemPoolInterface::class);
+        $cache = $builder->create(CacheItemPoolInterface::class, []);
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'dbal' => [
                         'configuration' => [
@@ -66,8 +68,8 @@ final class ConfigurationFactoryTest extends TestCase
                     ],
                 ],
             ]),
-            Call::create('has')->with(CacheItemPoolInterface::class)->willReturn(true),
-            Call::create('get')->with(CacheItemPoolInterface::class)->willReturn($cache),
+            new WithReturn('has', [CacheItemPoolInterface::class], true),
+            new WithReturn('get', [CacheItemPoolInterface::class], $cache),
         ]);
 
         $factory = [ConfigurationFactory::class, 'default'];

@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\DBAL\Tools\Console\Command\Database;
 
 use Chubbyphp\Laminas\Config\Doctrine\DBAL\Tools\Console\Command\Database\CreateCommand;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithException;
+use Chubbyphp\Mock\MockMethod\WithoutReturn;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
@@ -22,35 +24,35 @@ use Symfony\Component\Console\Output\BufferedOutput;
  */
 final class CreateCommandTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testExecuteFakeSqlite(): void
     {
         $dbName = \sprintf('sample-%s', uniqid());
 
         $path = sys_get_temp_dir().'/'.$dbName.'.db';
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
+        $builder = new MockObjectBuilder();
+
+        /** @var Connection $connection */
+        $connection = $builder->create(Connection::class, [
+            new WithReturn('getParams', [], [
                 'driver' => 'pdo_sqlite',
                 'path' => $path,
             ]),
         ]);
 
-        /** @var ConnectionProvider|MockObject $connectionProvider */
-        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $builder->create(ConnectionProvider::class, [
+            new WithReturn('getDefaultConnection', [], $connection),
         ]);
 
-        /** @var AbstractSchemaManager|MockObject $schemaManager */
-        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
-            Call::create('createDatabase')->with($path),
+        /** @var AbstractSchemaManager $schemaManager */
+        $schemaManager = $builder->create(AbstractSchemaManager::class, [
+            new WithoutReturn('createDatabase', [$path]),
         ]);
 
-        /** @var Connection|MockObject $tmpConnection */
-        $tmpConnection = $this->getMockByCalls(Connection::class, [
-            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        /** @var Connection $tmpConnection */
+        $tmpConnection = $builder->create(Connection::class, [
+            new WithReturn('createSchemaManager', [], $schemaManager),
         ]);
 
         $input = new ArrayInput([]);
@@ -66,18 +68,20 @@ final class CreateCommandTest extends TestCase
     public function testExecuteFakeSqliteWithMissingPath(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Connection does not contain a \'path\' or \'dbname\' parameter.');
+        $this->expectExceptionMessage("Connection does not contain a 'path' or 'dbname' parameter.");
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
+        $builder = new MockObjectBuilder();
+
+        /** @var Connection $connection */
+        $connection = $builder->create(Connection::class, [
+            new WithReturn('getParams', [], [
                 'driver' => 'pdo_sqlite',
             ]),
         ]);
 
-        /** @var ConnectionProvider|MockObject $connectionProvider */
-        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $builder->create(ConnectionProvider::class, [
+            new WithReturn('getDefaultConnection', [], $connection),
         ]);
 
         $input = new ArrayInput([]);
@@ -92,9 +96,11 @@ final class CreateCommandTest extends TestCase
     {
         $dbName = \sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
+        $builder = new MockObjectBuilder();
+
+        /** @var Connection $connection */
+        $connection = $builder->create(Connection::class, [
+            new WithReturn('getParams', [], [
                 'driver' => 'pdo_pgsql',
                 'primary' => [
                     'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
@@ -103,25 +109,25 @@ final class CreateCommandTest extends TestCase
             ]),
         ]);
 
-        /** @var ConnectionProvider|MockObject $connectionProvider */
-        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
-            Call::create('getConnection')->with('name')->willReturn($connection),
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $builder->create(ConnectionProvider::class, [
+            new WithReturn('getConnection', ['name'], $connection),
         ]);
 
-        /** @var AbstractPlatform|MockObject $databasePlatform */
-        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
-            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        /** @var AbstractPlatform $databasePlatform */
+        $databasePlatform = $builder->create(AbstractPlatform::class, [
+            new WithReturn('quoteSingleIdentifier', [$dbName], '"'.$dbName.'"'),
         ]);
 
-        /** @var AbstractSchemaManager|MockObject $schemaManager */
-        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
-            Call::create('createDatabase')->with('"'.$dbName.'"'),
+        /** @var AbstractSchemaManager $schemaManager */
+        $schemaManager = $builder->create(AbstractSchemaManager::class, [
+            new WithoutReturn('createDatabase', ['"'.$dbName.'"']),
         ]);
 
-        /** @var Connection|MockObject $tmpConnection */
-        $tmpConnection = $this->getMockByCalls(Connection::class, [
-            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
-            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        /** @var Connection $tmpConnection */
+        $tmpConnection = $builder->create(Connection::class, [
+            new WithReturn('getDatabasePlatform', [], $databasePlatform),
+            new WithReturn('createSchemaManager', [], $schemaManager),
         ]);
 
         $input = new ArrayInput([
@@ -140,9 +146,11 @@ final class CreateCommandTest extends TestCase
     {
         $dbName = \sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
+        $builder = new MockObjectBuilder();
+
+        /** @var Connection $connection */
+        $connection = $builder->create(Connection::class, [
+            new WithReturn('getParams', [], [
                 'driver' => 'pdo_pgsql',
                 'primary' => [
                     'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
@@ -151,26 +159,31 @@ final class CreateCommandTest extends TestCase
             ]),
         ]);
 
-        /** @var ConnectionProvider|MockObject $connectionProvider */
-        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $builder->create(ConnectionProvider::class, [
+            new WithReturn('getDefaultConnection', [], $connection),
         ]);
 
-        /** @var AbstractPlatform|MockObject $databasePlatform */
-        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
-            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        /** @var AbstractPlatform $databasePlatform */
+        $databasePlatform = $builder->create(AbstractPlatform::class, [
+            new WithReturn('quoteSingleIdentifier', [$dbName], '"'.$dbName.'"'),
         ]);
 
-        /** @var AbstractSchemaManager|MockObject $schemaManager */
-        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
-            Call::create('createDatabase')->with('"'.$dbName.'"')
-                ->willThrowException(new \Exception('An exception occurred while executing a query: SQLSTATE[42P04]: Duplicate database: 7 ERROR:  database "'.$dbName.'" already exists')),
+        /** @var AbstractSchemaManager $schemaManager */
+        $schemaManager = $builder->create(AbstractSchemaManager::class, [
+            new WithException(
+                'createDatabase',
+                ['"'.$dbName.'"'],
+                new \Exception(
+                    'An exception occurred while executing a query: SQLSTATE[42P04]: Duplicate database: 7 ERROR:  database "'.$dbName.'" already exists'
+                )
+            ),
         ]);
 
-        /** @var Connection|MockObject $tmpConnection */
-        $tmpConnection = $this->getMockByCalls(Connection::class, [
-            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
-            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
+        /** @var Connection $tmpConnection */
+        $tmpConnection = $builder->create(Connection::class, [
+            new WithReturn('getDatabasePlatform', [], $databasePlatform),
+            new WithReturn('createSchemaManager', [], $schemaManager),
         ]);
 
         $input = new ArrayInput([]);
@@ -193,9 +206,11 @@ final class CreateCommandTest extends TestCase
     {
         $dbName = \sprintf('sample-%s', uniqid());
 
-        /** @var Connection|MockObject $connection */
-        $connection = $this->getMockByCalls(Connection::class, [
-            Call::create('getParams')->with()->willReturn([
+        $builder = new MockObjectBuilder();
+
+        /** @var Connection $connection */
+        $connection = $builder->create(Connection::class, [
+            new WithReturn('getParams', [], [
                 'driver' => 'pdo_pgsql',
                 'primary' => [
                     'url' => 'pgsql://root:root@localhost:5432?charset=utf8',
@@ -204,25 +219,25 @@ final class CreateCommandTest extends TestCase
             ]),
         ]);
 
-        /** @var ConnectionProvider|MockObject $connectionProvider */
-        $connectionProvider = $this->getMockByCalls(ConnectionProvider::class, [
-            Call::create('getDefaultConnection')->with()->willReturn($connection),
+        /** @var ConnectionProvider $connectionProvider */
+        $connectionProvider = $builder->create(ConnectionProvider::class, [
+            new WithReturn('getDefaultConnection', [], $connection),
         ]);
 
-        /** @var AbstractPlatform|MockObject $databasePlatform */
-        $databasePlatform = $this->getMockByCalls(AbstractPlatform::class, [
-            Call::create('quoteSingleIdentifier')->with($dbName)->willReturn('"'.$dbName.'"'),
+        /** @var AbstractPlatform $databasePlatform */
+        $databasePlatform = $builder->create(AbstractPlatform::class, [
+            new WithReturn('quoteSingleIdentifier', [$dbName], '"'.$dbName.'"'),
         ]);
 
-        /** @var AbstractSchemaManager|MockObject $schemaManager */
-        $schemaManager = $this->getMockByCalls(AbstractSchemaManager::class, [
-            Call::create('listDatabases')->with()->willReturn([$dbName]),
+        /** @var AbstractSchemaManager $schemaManager */
+        $schemaManager = $builder->create(AbstractSchemaManager::class, [
+            new WithReturn('listDatabases', [], [$dbName]),
         ]);
 
-        /** @var Connection|MockObject $tmpConnection */
-        $tmpConnection = $this->getMockByCalls(Connection::class, [
-            Call::create('createSchemaManager')->with()->willReturn($schemaManager),
-            Call::create('getDatabasePlatform')->with()->willReturn($databasePlatform),
+        /** @var Connection $tmpConnection */
+        $tmpConnection = $builder->create(Connection::class, [
+            new WithReturn('createSchemaManager', [], $schemaManager),
+            new WithReturn('getDatabasePlatform', [], $databasePlatform),
         ]);
 
         $input = new ArrayInput([

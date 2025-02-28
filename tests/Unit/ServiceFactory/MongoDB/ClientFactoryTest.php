@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\MongoDB;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\MongoDB\ClientFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use MongoDB\Client;
 use MongoDB\Model\BSONArray;
 use PHPUnit\Framework\TestCase;
@@ -19,13 +19,13 @@ use Psr\Container\ContainerInterface;
  */
 final class ClientFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvokeWithDefaults(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'mongodb' => [
                         'client' => [],
@@ -33,7 +33,7 @@ final class ClientFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('mongodb://127.0.0.1/')->willReturn(false),
+            new WithReturn('has', ['mongodb://127.0.0.1/'], false),
         ]);
 
         $factory = new ClientFactory();
@@ -45,9 +45,11 @@ final class ClientFactoryTest extends TestCase
 
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'mongodb' => [
                         'client' => [
@@ -65,11 +67,11 @@ final class ClientFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('mongodb://host:9876/')->willReturn(false),
+            new WithReturn('has', ['mongodb://host:9876/'], false),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('app')->willReturn(false),
+            new WithReturn('has', ['app'], false),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with(BSONArray::class)->willReturn(false),
+            new WithReturn('has', [BSONArray::class], false),
         ]);
 
         $factory = new ClientFactory();
@@ -81,9 +83,11 @@ final class ClientFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'mongodb' => [
                         'client' => [
@@ -103,11 +107,11 @@ final class ClientFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('mongodb://host:9876/')->willReturn(false),
+            new WithReturn('has', ['mongodb://host:9876/'], false),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('app')->willReturn(false),
+            new WithReturn('has', ['app'], false),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with(BSONArray::class)->willReturn(false),
+            new WithReturn('has', [BSONArray::class], false),
         ]);
 
         $factory = [ClientFactory::class, 'default'];

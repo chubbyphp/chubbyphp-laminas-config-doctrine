@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ServiceFactory\Persistence\Mapping\Driver;
 
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\StaticPHPDriverFactory;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\Persistence\Mapping\Driver\StaticPHPDriver;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
@@ -18,13 +18,13 @@ use Psr\Container\ContainerInterface;
  */
 final class StaticPHPDriverFactoryTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testInvoke(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'staticPhpDriver' => ['paths' => '/path/to/classes'],
@@ -32,7 +32,7 @@ final class StaticPHPDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('/path/to/classes')->willReturn(false),
+            new WithReturn('has', ['/path/to/classes'], false),
         ]);
 
         $factory = new StaticPHPDriverFactory();
@@ -49,9 +49,11 @@ final class StaticPHPDriverFactoryTest extends TestCase
 
     public function testCallStatic(): void
     {
+        $builder = new MockObjectBuilder();
+
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with('config')->willReturn([
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'driver' => [
                         'staticPhpDriver' => [
@@ -61,7 +63,7 @@ final class StaticPHPDriverFactoryTest extends TestCase
                 ],
             ]),
             // this is cause each string value could be a service (resolveValue)
-            Call::create('has')->with('/path/to/classes')->willReturn(false),
+            new WithReturn('has', ['/path/to/classes'], false),
         ]);
 
         $factory = [StaticPHPDriverFactory::class, 'default'];

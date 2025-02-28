@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Chubbyphp\Tests\Laminas\Config\Doctrine\Unit\ODM\MongoDB\Tools\Console\Command;
 
 use Chubbyphp\Laminas\Config\Doctrine\ODM\MongoDB\Tools\Console\Command\DocumentManagerCommand;
-use Chubbyphp\Mock\Call;
-use Chubbyphp\Mock\MockByCallsTrait;
+use Chubbyphp\Mock\MockMethod\WithException;
+use Chubbyphp\Mock\MockMethod\WithReturn;
+use Chubbyphp\Mock\MockObjectBuilder;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
@@ -27,8 +28,6 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 final class DocumentManagerCommandTest extends TestCase
 {
-    use MockByCallsTrait;
-
     public function testRunWithNoneDocumentManager(): void
     {
         $input = new ArrayInput([
@@ -38,8 +37,10 @@ final class DocumentManagerCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
+        $builder = new MockObjectBuilder();
+
         /** @var DocumentManager $documentManager */
-        $documentManager = $this->getMockByCalls(DocumentManager::class);
+        $documentManager = $builder->create(DocumentManager::class, []);
 
         $command = new class($documentManager) extends Command {
             public function __construct(private DocumentManager $documentManager)
@@ -73,8 +74,8 @@ final class DocumentManagerCommandTest extends TestCase
         };
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with(DocumentManager::class)->willReturn($documentManager),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', [DocumentManager::class], $documentManager),
         ]);
 
         $documentManagerCommand = new DocumentManagerCommand($command, $container);
@@ -98,8 +99,15 @@ final class DocumentManagerCommandTest extends TestCase
 
         $output = new BufferedOutput();
 
+        $builder = new MockObjectBuilder();
+
         /** @var DocumentManager $documentManager */
-        $documentManager = $this->getMockByCalls(DocumentManager::class);
+        $documentManager = $builder->create(DocumentManager::class, []);
+
+        /** @var ContainerInterface $container */
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', [DocumentManager::class.'documentManagerName'], $documentManager),
+        ]);
 
         $command = new class($documentManager) extends Command {
             public function __construct(private DocumentManager $documentManager)
@@ -125,11 +133,6 @@ final class DocumentManagerCommandTest extends TestCase
             }
         };
 
-        /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with(DocumentManager::class.'documentManagerName')->willReturn($documentManager),
-        ]);
-
         $documentManagerCommand = new DocumentManagerCommand($command, $container);
         $documentManagerCommand->run($input, $output);
     }
@@ -144,6 +147,8 @@ final class DocumentManagerCommandTest extends TestCase
         ]);
 
         $output = new BufferedOutput();
+
+        $builder = new MockObjectBuilder();
 
         $exception = new class extends \Exception implements NotFoundExceptionInterface {};
 
@@ -162,8 +167,12 @@ final class DocumentManagerCommandTest extends TestCase
         };
 
         /** @var ContainerInterface $container */
-        $container = $this->getMockByCalls(ContainerInterface::class, [
-            Call::create('get')->with(DocumentManager::class.'unknownDocumentManagerName')->willThrowException($exception),
+        $container = $builder->create(ContainerInterface::class, [
+            new WithException(
+                'get',
+                [DocumentManager::class.'unknownDocumentManagerName'],
+                $exception,
+            ),
         ]);
 
         $documentManagerCommand = new DocumentManagerCommand($command, $container);
