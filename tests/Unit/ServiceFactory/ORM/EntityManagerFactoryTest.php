@@ -58,6 +58,7 @@ final class EntityManagerFactoryTest extends TestCase
             new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
             new WithReturn('getProxyNamespace', [], 'DoctrineORMProxy'),
             new WithReturn('getAutoGenerateProxyClasses', [], AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            new WithReturn('isNativeLazyObjectsEnabled', [], false),
             new WithReturn('isSecondLevelCacheEnabled', [], false),
         ]);
 
@@ -110,6 +111,7 @@ final class EntityManagerFactoryTest extends TestCase
             new WithReturn('getProxyDir', [], '/tmp/doctrine/orm/proxies'),
             new WithReturn('getProxyNamespace', [], 'DoctrineORMProxy'),
             new WithReturn('getAutoGenerateProxyClasses', [], AbstractProxyFactory::AUTOGENERATE_ALWAYS),
+            new WithReturn('isNativeLazyObjectsEnabled', [], false),
             new WithReturn('isSecondLevelCacheEnabled', [], false),
         ]);
 
