@@ -63,7 +63,7 @@ final class DocumentManagerCommandTest extends TestCase
             protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 /** @var DocumentManagerHelper $documentManagerHelper */
-                $documentManagerHelper = $this->getHelperSet()->get('dm');
+                $documentManagerHelper = $this->getHelperSet()->get('documentManager');
 
                 Assert::assertSame($this->documentManager, $documentManagerHelper->getDocumentManager());
 
@@ -125,7 +125,7 @@ final class DocumentManagerCommandTest extends TestCase
             protected function execute(InputInterface $input, OutputInterface $output): int
             {
                 /** @var DocumentManagerHelper $documentManagerHelper */
-                $documentManagerHelper = $this->getHelperSet()->get('dm');
+                $documentManagerHelper = $this->getHelperSet()->get('documentManager');
 
                 Assert::assertSame($this->documentManager, $documentManagerHelper->getDocumentManager());
 

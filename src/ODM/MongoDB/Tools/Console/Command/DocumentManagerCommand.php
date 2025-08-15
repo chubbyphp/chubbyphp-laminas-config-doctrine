@@ -34,18 +34,25 @@ final class DocumentManagerCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        if (null !== $this->getApplication()) {
+            // has to be set, and cannot be set in configure, cause symfony...
+            $this->command->setApplication($this->getApplication());
+        }
+
         /** @var string $documentManagerName */
         $documentManagerName = $input->getOption('dm');
 
         try {
             $documentManager = $this->container->get(DocumentManager::class.$documentManagerName);
         } catch (NotFoundExceptionInterface $serviceNotFoundException) {
-            throw new \InvalidArgumentException(\sprintf('Missing document manager with name "%s"', $documentManagerName), $serviceNotFoundException->getCode(), $serviceNotFoundException);
+            throw new \InvalidArgumentException(
+                \sprintf('Missing document manager with name "%s"', $documentManagerName),
+                $serviceNotFoundException->getCode(),
+                $serviceNotFoundException,
+            );
         }
 
-        $this->command->setHelperSet(new HelperSet([
-            'dm' => new DocumentManagerHelper($documentManager),
-        ]));
+        $this->command->setHelperSet(new HelperSet([new DocumentManagerHelper($documentManager)]));
 
         return (int) $this->command->run($input, $output);
     }
