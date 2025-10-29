@@ -27,30 +27,30 @@
         "doctrine/common": "^3.5",
         "doctrine/event-manager": "^2.0.1",
         "psr/container": "^1.1.2|^2.0.2",
-        "symfony/cache": "^5.4.46|^6.4.24|^7.3.2",
-        "symfony/console": "^5.4.47|^6.4.24|^7.3.2"
+        "symfony/cache": "^5.4.46|^6.4.27|^7.3.5",
+        "symfony/console": "^5.4.47|^6.4.27|^7.3.5"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
         "chubbyphp/chubbyphp-laminas-config": "^1.4",
         "chubbyphp/chubbyphp-mock": "^2.0",
         "dg/bypass-finals": "^1.9",
-        "doctrine/dbal": "^4.3.2",
-        "doctrine/mongodb-odm": "^2.11.2",
-        "doctrine/orm": "^3.5.1",
-        "infection/infection": "^0.31.1",
-        "mongodb/mongodb": "^1.21.1",
+        "doctrine/dbal": "^4.3.4",
+        "doctrine/mongodb-odm": "^2.14",
+        "doctrine/orm": "^3.5.3",
+        "infection/infection": "^0.31.9",
+        "mongodb/mongodb": "^1.21.2",
         "php-coveralls/php-coveralls": "^2.8",
         "phpstan/extension-installer": "^1.4.3",
-        "phpstan/phpstan": "^2.1.22",
-        "phpunit/phpunit": "^11.5.28",
-        "ramsey/uuid": "^4.9"
+        "phpstan/phpstan": "^2.1.31",
+        "phpunit/phpunit": "^11.5.42",
+        "ramsey/uuid": "^4.9.1"
     },
     "conflict": {
-        "doctrine/dbal": "<4.3.2 || >=5.0",
-        "doctrine/mongodb-odm": "<2.11.2 || >=3.0",
-        "doctrine/orm": "<3.5.1 || >=4.0",
-        "mongodb/mongodb": "<1.21.1 || >=2.0"
+        "doctrine/dbal": "<4.3.4 || >=5.0",
+        "doctrine/mongodb-odm": "<2.14 || >=3.0",
+        "doctrine/orm": "<3.5.3 || >=4.0",
+        "mongodb/mongodb": "<1.21.2 || >=2.0"
     },
     "autoload": {
         "psr-4": {
