@@ -39,6 +39,7 @@ final class DocumentManagerFactoryTest extends TestCase
 
         /** @var Configuration $configuration */
         $configuration = $builder->create(Configuration::class, [
+            new WithReturn('isNativeLazyObjectEnabled', [], false),
             new WithReturn('isLazyGhostObjectEnabled', [], true),
             new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
             new WithReturn('getMetadataCache', [], $cache),
@@ -88,6 +89,7 @@ final class DocumentManagerFactoryTest extends TestCase
 
         /** @var Configuration $configuration */
         $configuration = $builder->create(Configuration::class, [
+            new WithReturn('isNativeLazyObjectEnabled', [], false),
             new WithReturn('isLazyGhostObjectEnabled', [], true),
             new WithReturn('getClassMetadataFactoryName', [], ClassMetadataFactory::class),
             new WithReturn('getMetadataCache', [], $cache),
