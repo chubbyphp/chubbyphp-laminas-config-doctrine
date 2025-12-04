@@ -33,7 +33,7 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Requirements
 
- * php: 8.2
+ * php: 8.3
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.4
  * [doctrine/common][11]: ^3.5
  * [doctrine/event-manager][12]: ^2.0.1
@@ -44,17 +44,17 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^4.4
+ * [doctrine/dbal][20]: ^4.4.1
  * [doctrine/mongodb-odm][21]: ^2.15.1
  * [doctrine/orm][22]: ^3.5.8
- * [mongodb/mongodb][23]: ^1.21.3
+ * [mongodb/mongodb][23]: 1.21.3|^2.1.2
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.0"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1"
 ```
 
 ## Usage

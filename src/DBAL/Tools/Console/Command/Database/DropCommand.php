@@ -14,8 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class DropCommand extends Command
 {
-    private const RETURN_CODE_NOT_DROP = 1;
-    private const RETURN_CODE_NO_FORCE = 2;
+    private const int RETURN_CODE_NOT_DROP = 1;
+    private const int RETURN_CODE_NO_FORCE = 2;
 
     /**
      * @var \Closure(array<mixed>): Connection

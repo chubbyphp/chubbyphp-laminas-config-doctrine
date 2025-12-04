@@ -6,38 +6,6 @@ on:
     - cron: "0 0 * * *"
 
 jobs:
-  php82:
-    name: PHP 8.2
-    runs-on: ubuntu-24.04
-    services:
-      mongo:
-        image: mongo:8
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: root
-        ports:
-          - 27017:27017
-      postgres:
-        image: postgres:17
-        env:
-          POSTGRES_USER: root
-          POSTGRES_PASSWORD: root
-        ports:
-          - 5432:5432
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: wait for databases
-        run: |
-          while ! nc -z localhost 27017; do sleep 0.1; done
-          while ! nc -z localhost 5432; do sleep 0.1; done
-      - name: composer test
-        uses: docker://ghcr.io/chubbyphp/ci-php82:latest
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"
-          POSTGRES_URL: "pgsql://root:root@172.17.0.1:5432?charset=utf8"
-          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
   php83:
     name: PHP 8.3
     runs-on: ubuntu-24.04
@@ -97,6 +65,38 @@ jobs:
           while ! nc -z localhost 5432; do sleep 0.1; done
       - name: composer test
         uses: docker://ghcr.io/chubbyphp/ci-php84:latest
+        env:
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"
+          POSTGRES_URL: "pgsql://root:root@172.17.0.1:5432?charset=utf8"
+          STRYKER_DASHBOARD_API_KEY: ${{ secrets.STRYKER_DASHBOARD_API_KEY }}
+  php85:
+    name: PHP 8.5
+    runs-on: ubuntu-24.04
+    services:
+      mongo:
+        image: mongo:8
+        env:
+          MONGO_INITDB_ROOT_USERNAME: root
+          MONGO_INITDB_ROOT_PASSWORD: root
+        ports:
+          - 27017:27017
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: root
+          POSTGRES_PASSWORD: root
+        ports:
+          - 5432:5432
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: wait for databases
+        run: |
+          while ! nc -z localhost 27017; do sleep 0.1; done
+          while ! nc -z localhost 5432; do sleep 0.1; done
+      - name: composer test
+        uses: docker://ghcr.io/chubbyphp/ci-php85:latest
         env:
           COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           MONGODB_URI: "mongodb://root:root@172.17.0.1:27017"

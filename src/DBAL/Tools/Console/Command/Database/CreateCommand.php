@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class CreateCommand extends Command
 {
-    private const RETURN_CODE_NOT_CREATE = 1;
+    private const int RETURN_CODE_NOT_CREATE = 1;
 
     /**
      * @var \Closure(array<mixed>): Connection
