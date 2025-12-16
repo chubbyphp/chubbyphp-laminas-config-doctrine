@@ -32,7 +32,6 @@ final class UpdateCommandFactoryTest extends TestCase
         self::assertInstanceOf(DocumentManagerCommand::class, $entityManagerCommand);
 
         $commandReflectionProperty = new \ReflectionProperty($entityManagerCommand, 'command');
-        $commandReflectionProperty->setAccessible(true);
 
         self::assertInstanceOf(UpdateCommand::class, $commandReflectionProperty->getValue($entityManagerCommand));
     }

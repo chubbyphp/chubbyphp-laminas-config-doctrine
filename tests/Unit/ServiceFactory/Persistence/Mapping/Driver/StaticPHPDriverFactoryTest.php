@@ -42,7 +42,6 @@ final class StaticPHPDriverFactoryTest extends TestCase
         self::assertInstanceOf(StaticPHPDriver::class, $service);
 
         $pathsReflectionProperty = new \ReflectionProperty(StaticPHPDriver::class, 'paths');
-        $pathsReflectionProperty->setAccessible(true);
 
         self::assertSame(['/path/to/classes'], $pathsReflectionProperty->getValue($service));
     }
@@ -73,7 +72,6 @@ final class StaticPHPDriverFactoryTest extends TestCase
         self::assertInstanceOf(StaticPHPDriver::class, $service);
 
         $pathsReflectionProperty = new \ReflectionProperty(StaticPHPDriver::class, 'paths');
-        $pathsReflectionProperty->setAccessible(true);
 
         self::assertSame(['/path/to/classes'], $pathsReflectionProperty->getValue($service));
     }

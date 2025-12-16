@@ -32,7 +32,6 @@ final class ValidateCommandFactoryTest extends TestCase
         self::assertInstanceOf(DocumentManagerCommand::class, $entityManagerCommand);
 
         $commandReflectionProperty = new \ReflectionProperty($entityManagerCommand, 'command');
-        $commandReflectionProperty->setAccessible(true);
 
         self::assertInstanceOf(ValidateCommand::class, $commandReflectionProperty->getValue($entityManagerCommand));
     }

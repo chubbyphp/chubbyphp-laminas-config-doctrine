@@ -42,7 +42,6 @@ final class ClassMapDriverFactoryTest extends TestCase
         self::assertInstanceOf(ClassMapDriver::class, $service);
 
         $mapReflectionProperty = new \ReflectionProperty($service, 'map');
-        $mapReflectionProperty->setAccessible(true);
 
         self::assertSame(['class' => 'mappingClass'], $mapReflectionProperty->getValue($service));
     }
@@ -73,7 +72,6 @@ final class ClassMapDriverFactoryTest extends TestCase
         self::assertInstanceOf(ClassMapDriver::class, $service);
 
         $mapReflectionProperty = new \ReflectionProperty($service, 'map');
-        $mapReflectionProperty->setAccessible(true);
 
         self::assertSame(['class' => 'mappingClass'], $mapReflectionProperty->getValue($service));
     }
