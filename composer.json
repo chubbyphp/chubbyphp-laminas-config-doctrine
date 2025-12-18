@@ -27,9 +27,9 @@
         "doctrine/common": "^3.5",
         "doctrine/event-manager": "^2.0.1",
         "psr/container": "^1.1.2|^2.0.2",
-        "symfony/cache": "^5.4.46|^6.4.28|^7.4",
-        "symfony/console": "^5.4.47|^6.4.27|^7.4",
-        "symfony/var-exporter": "^5.4.45|^6.4.26|^7.4"
+        "symfony/cache": "^6.4.30|^7.4.1|^8.0.1",
+        "symfony/console": "^6.4.30|^7.4.1|^8.0.1",
+        "symfony/var-exporter": "^6.4.26|^7.4.0"
     },
     "require-dev": {
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
