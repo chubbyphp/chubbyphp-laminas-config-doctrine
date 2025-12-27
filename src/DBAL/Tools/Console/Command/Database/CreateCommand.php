@@ -19,9 +19,9 @@ final class CreateCommand extends Command
     /**
      * @var \Closure(array<mixed>): Connection
      */
-    private \Closure $connectionFactory;
+    private readonly \Closure $connectionFactory;
 
-    public function __construct(private ConnectionProvider $connectionProvider, ?\Closure $connectionFactory = null)
+    public function __construct(private readonly ConnectionProvider $connectionProvider, ?\Closure $connectionFactory = null)
     {
         parent::__construct();
 

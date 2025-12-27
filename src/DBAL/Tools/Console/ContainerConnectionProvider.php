@@ -10,7 +10,7 @@ use Psr\Container\ContainerInterface;
 
 final class ContainerConnectionProvider implements ConnectionProvider
 {
-    public function __construct(private ContainerInterface $container) {}
+    public function __construct(private readonly ContainerInterface $container) {}
 
     public function getDefaultConnection(): Connection
     {

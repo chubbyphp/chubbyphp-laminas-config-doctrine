@@ -16,7 +16,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 final class DocumentManagerCommand extends Command
 {
-    public function __construct(private Command $command, private ContainerInterface $container)
+    public function __construct(private readonly Command $command, private readonly ContainerInterface $container)
     {
         parent::__construct();
     }
