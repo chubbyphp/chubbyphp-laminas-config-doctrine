@@ -36,7 +36,7 @@ final class EntityManagerTest extends TestCase
 {
     public function test(): void
     {
-        $dsnParser = new DsnParser();
+        $dsnParser = new DsnParser(['pgsql' => 'pdo_pgsql']);
         $connectionParams = $dsnParser
             ->parse(getenv('POSTGRES_URL') ?: 'pgsql://root:root@localhost:5432?charset=UTF8')
         ;

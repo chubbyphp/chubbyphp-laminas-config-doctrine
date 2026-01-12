@@ -17,7 +17,7 @@ use MyProject\Mapping\Orm\SampleMapping;
 use MyProject\Model\Sample;
 use Psr\Cache\CacheItemPoolInterface;
 
-$dsnParser = new DsnParser();
+$dsnParser = new DsnParser(['pgsql' => 'pdo_pgsql']);
 $connectionParams = $dsnParser->parse('pgsql://root:root@localhost:5432/sample?charset=utf8');
 
 $config = [
