@@ -1,6 +1,1 @@
 parameters:
-    ignoreErrors:
-        -
-            message: '#Method Chubbyphp\\Laminas\\Config\\Doctrine\\Persistence\\Mapping\\Driver\\ClassMapMappingInterface\:\:configureMapping\(\) has parameter \$metadata with generic interface Doctrine\\Persistence\\Mapping\\ClassMetadata but does not specify its types\: T#'
-            path: %currentWorkingDirectory%/src/Persistence/Mapping/Driver/ClassMapMappingInterface.php
-

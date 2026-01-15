@@ -12,9 +12,21 @@ final class ConfigurationFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): Configuration
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['mongodbOdm']['configuration'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
 
-        /** @var array<string, mixed> $filters */
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $mongodbOdm */
+        $mongodbOdm = $doctrine['mongodbOdm'] ?? [];
+
+        /** @var array<string, mixed> $configurationConfig */
+        $configurationConfig = $mongodbOdm['configuration'] ?? [];
+
+        $config = $this->resolveConfig($configurationConfig);
+
+        /** @var array<int, array{name: string, className: class-string, parameters: array<string, mixed>}> $filters */
         $filters = $this->resolveValue($container, $config['filters'] ?? []);
 
         unset($config['filters']);
@@ -28,7 +40,7 @@ final class ConfigurationFactory extends AbstractFactory
     }
 
     /**
-     * @param array<string, mixed> $filters
+     * @param array<int, array{name: string, className: class-string, parameters: array<string, mixed>}> $filters
      */
     private function callAdders(Configuration $configuration, array $filters): void
     {

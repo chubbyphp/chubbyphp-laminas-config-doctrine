@@ -13,11 +13,24 @@ final class ChainAdapterFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): ChainAdapter
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['cache']['chain'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
+
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $cache */
+        $cache = $doctrine['cache'] ?? [];
+
+        /** @var array<string, mixed> $chain */
+        $chain = $cache['chain'] ?? [];
+
+        $config = $this->resolveConfig($chain);
 
         /** @var CacheItemPoolInterface[] $adapters */
         $adapters = $this->resolveValue($container, $config['adapters'] ?? []);
 
+        /** @var int $defaultLifetime */
         $defaultLifetime = $config['defaultLifetime'] ?? 0;
 
         return new ChainAdapter($adapters, $defaultLifetime);

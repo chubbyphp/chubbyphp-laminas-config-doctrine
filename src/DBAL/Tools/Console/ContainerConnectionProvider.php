@@ -14,11 +14,13 @@ final class ContainerConnectionProvider implements ConnectionProvider
 
     public function getDefaultConnection(): Connection
     {
+        /** @var Connection */
         return $this->container->get(Connection::class);
     }
 
     public function getConnection(string $name): Connection
     {
+        /** @var Connection */
         return $this->container->get(Connection::class.$name);
     }
 }

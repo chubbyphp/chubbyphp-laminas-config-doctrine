@@ -13,10 +13,27 @@ final class FilesystemAdapterFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): FilesystemAdapter
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['cache']['filesystem'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
 
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $cache */
+        $cache = $doctrine['cache'] ?? [];
+
+        /** @var array<string, mixed> $filesystem */
+        $filesystem = $cache['filesystem'] ?? [];
+
+        $config = $this->resolveConfig($filesystem);
+
+        /** @var string $namespace */
         $namespace = $config['namespace'] ?? '';
+
+        /** @var int $defaultLifetime */
         $defaultLifetime = $config['defaultLifetime'] ?? 0;
+
+        /** @var null|string $directory */
         $directory = $config['directory'] ?? null;
 
         /** @var null|MarshallerInterface $marshaller */

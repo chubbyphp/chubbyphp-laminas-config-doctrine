@@ -23,7 +23,10 @@ final class DocumentManagerCommand extends Command
 
     protected function configure(): void
     {
-        $this->setName($this->command->getName());
+        $commandName = $this->command->getName();
+        if (null !== $commandName) {
+            $this->setName($commandName);
+        }
         $this->setAliases($this->command->getAliases());
         $this->setDescription($this->command->getDescription());
         $this->setHelp($this->command->getHelp());
@@ -43,6 +46,7 @@ final class DocumentManagerCommand extends Command
         $documentManagerName = $input->getOption('dm');
 
         try {
+            /** @var DocumentManager $documentManager */
             $documentManager = $this->container->get(DocumentManager::class.$documentManagerName);
         } catch (NotFoundExceptionInterface $serviceNotFoundException) {
             throw new \InvalidArgumentException(

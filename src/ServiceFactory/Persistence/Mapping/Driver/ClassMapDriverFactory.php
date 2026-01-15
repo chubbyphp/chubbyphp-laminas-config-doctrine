@@ -12,8 +12,21 @@ final class ClassMapDriverFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): ClassMapDriver
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['driver']['classMap'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
 
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $driver */
+        $driver = $doctrine['driver'] ?? [];
+
+        /** @var array<string, mixed> $classMap */
+        $classMap = $driver['classMap'] ?? [];
+
+        $config = $this->resolveConfig($classMap);
+
+        /** @var array<string, string> $map */
         $map = $this->resolveValue($container, $config['map'] ?? []);
 
         unset($config['map']);

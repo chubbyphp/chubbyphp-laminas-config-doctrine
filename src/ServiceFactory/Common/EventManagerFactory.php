@@ -6,21 +6,35 @@ namespace Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common;
 
 use Chubbyphp\Laminas\Config\Factory\AbstractFactory;
 use Doctrine\Common\EventManager;
+use Doctrine\Common\EventSubscriber;
 use Psr\Container\ContainerInterface;
 
 final class EventManagerFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): EventManager
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['eventManager'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
+
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $eventManagerConfig */
+        $eventManagerConfig = $doctrine['eventManager'] ?? [];
+
+        $config = $this->resolveConfig($eventManagerConfig);
 
         $eventManager = new EventManager();
 
-        foreach ($this->resolveValue($container, $config['listeners'] ?? []) as $listener) {
+        /** @var array<int, array{events: array<string>|string, listener: object}> $listeners */
+        $listeners = $this->resolveValue($container, $config['listeners'] ?? []);
+        foreach ($listeners as $listener) {
             $eventManager->addEventListener($listener['events'], $listener['listener']);
         }
 
-        foreach ($this->resolveValue($container, $config['subscribers'] ?? []) as $subscriber) {
+        /** @var array<int, EventSubscriber> $subscribers */
+        $subscribers = $this->resolveValue($container, $config['subscribers'] ?? []);
+        foreach ($subscribers as $subscriber) {
             $eventManager->addEventSubscriber($subscriber);
         }
 

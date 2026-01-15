@@ -13,12 +13,27 @@ final class MemcachedAdapterFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): MemcachedAdapter
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['cache']['memcached'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
+
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $cache */
+        $cache = $doctrine['cache'] ?? [];
+
+        /** @var array<string, mixed> $memcached */
+        $memcached = $cache['memcached'] ?? [];
+
+        $config = $this->resolveConfig($memcached);
 
         /** @var \Memcached $client */
         $client = $this->resolveValue($container, $config['client'] ?? null);
 
+        /** @var string $namespace */
         $namespace = $config['namespace'] ?? '';
+
+        /** @var int $defaultLifetime */
         $defaultLifetime = $config['defaultLifetime'] ?? 0;
 
         /** @var null|MarshallerInterface $marshaller */

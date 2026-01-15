@@ -13,10 +13,27 @@ final class ApcuAdapterFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): ApcuAdapter
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['cache']['apcu'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
 
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
+
+        /** @var array<string, mixed> $cache */
+        $cache = $doctrine['cache'] ?? [];
+
+        /** @var array<string, mixed> $apcu */
+        $apcu = $cache['apcu'] ?? [];
+
+        $config = $this->resolveConfig($apcu);
+
+        /** @var string $namespace */
         $namespace = $config['namespace'] ?? '';
+
+        /** @var int $defaultLifetime */
         $defaultLifetime = $config['defaultLifetime'] ?? 0;
+
+        /** @var null|string $version */
         $version = $config['version'] ?? null;
 
         /** @var null|MarshallerInterface $marshaller */

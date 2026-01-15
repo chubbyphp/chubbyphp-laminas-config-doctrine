@@ -87,12 +87,13 @@ final class DropCommand extends Command
     }
 
     /**
-     * @return array<mixed>
+     * @return array<string, mixed>
      */
     private function getParams(Connection $connection): array
     {
         $params = $connection->getParams();
         if (isset($params['primary'])) {
+            /** @var array<string, mixed> $params */
             $params = $params['primary'];
         }
 
@@ -100,15 +101,15 @@ final class DropCommand extends Command
     }
 
     /**
-     * @param array<string, string> $params
+     * @param array<string, mixed> $params
      */
     private function getDbName(array $params): string
     {
-        if (isset($params['path'])) {
+        if (isset($params['path']) && \is_string($params['path'])) {
             return $params['path'];
         }
 
-        if (isset($params['dbname'])) {
+        if (isset($params['dbname']) && \is_string($params['dbname'])) {
             return $params['dbname'];
         }
 

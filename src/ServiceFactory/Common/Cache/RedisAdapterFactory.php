@@ -13,17 +13,32 @@ final class RedisAdapterFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): RedisAdapter
     {
-        $config = $this->resolveConfig($container->get('config')['doctrine']['cache']['redis'] ?? []);
+        /** @var array<string, mixed> $containerConfig */
+        $containerConfig = $container->get('config');
 
-        /** @var \Redis $redis */
-        $redis = $this->resolveValue($container, $config['redis'] ?? null);
+        /** @var array<string, mixed> $doctrine */
+        $doctrine = $containerConfig['doctrine'] ?? [];
 
+        /** @var array<string, mixed> $cache */
+        $cache = $doctrine['cache'] ?? [];
+
+        /** @var array<string, mixed> $redis */
+        $redis = $cache['redis'] ?? [];
+
+        $config = $this->resolveConfig($redis);
+
+        /** @var \Redis $redisClient */
+        $redisClient = $this->resolveValue($container, $config['redis'] ?? null);
+
+        /** @var string $namespace */
         $namespace = $config['namespace'] ?? '';
+
+        /** @var int $defaultLifetime */
         $defaultLifetime = $config['defaultLifetime'] ?? 0;
 
         /** @var null|MarshallerInterface $marshaller */
         $marshaller = $this->resolveValue($container, $config['marshaller'] ?? null);
 
-        return new RedisAdapter($redis, $namespace, $defaultLifetime, $marshaller);
+        return new RedisAdapter($redisClient, $namespace, $defaultLifetime, $marshaller);
     }
 }

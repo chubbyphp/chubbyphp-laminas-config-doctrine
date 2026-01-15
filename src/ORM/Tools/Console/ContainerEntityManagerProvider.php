@@ -14,11 +14,13 @@ final class ContainerEntityManagerProvider implements EntityManagerProvider
 
     public function getDefaultManager(): EntityManagerInterface
     {
+        /** @var EntityManagerInterface */
         return $this->container->get(EntityManagerInterface::class);
     }
 
     public function getManager(string $name): EntityManagerInterface
     {
+        /** @var EntityManagerInterface */
         return $this->container->get(EntityManagerInterface::class.$name);
     }
 }

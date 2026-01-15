@@ -36,8 +36,6 @@ final class ConnectionFactoryTest extends TestCase
 
         /** @var ContainerInterface $container */
         $container = $builder->create(ContainerInterface::class, [
-            new WithReturn('has', [Configuration::class], true),
-            new WithReturn('get', [Configuration::class], $configuration),
             new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'dbal' => [
@@ -47,6 +45,8 @@ final class ConnectionFactoryTest extends TestCase
                     ],
                 ],
             ]),
+            new WithReturn('has', [Configuration::class], true),
+            new WithReturn('get', [Configuration::class], $configuration),
         ]);
 
         $factory = new ConnectionFactory();
@@ -72,8 +72,6 @@ final class ConnectionFactoryTest extends TestCase
 
         /** @var ContainerInterface $container */
         $container = $builder->create(ContainerInterface::class, [
-            new WithReturn('has', [Configuration::class.'default'], true),
-            new WithReturn('get', [Configuration::class.'default'], $configuration),
             new WithReturn('get', ['config'], [
                 'doctrine' => [
                     'dbal' => [
@@ -85,6 +83,8 @@ final class ConnectionFactoryTest extends TestCase
                     ],
                 ],
             ]),
+            new WithReturn('has', [Configuration::class.'default'], true),
+            new WithReturn('get', [Configuration::class.'default'], $configuration),
         ]);
 
         $factory = [ConnectionFactory::class, 'default'];
