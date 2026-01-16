@@ -34,12 +34,12 @@ and the possiblity to install only the needed vendors make the difference to the
 ## Requirements
 
  * php: 8.3
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.4
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.1
  * [doctrine/common][11]: ^3.5
  * [doctrine/event-manager][12]: ^2.0.1
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^6.4.30|^7.4.1|^8.0.1
- * [symfony/console][15]: ^6.4.30|^7.4.1|^8.0.1
+ * [symfony/cache][14]: ^6.4.31|^7.4.3|^8.0.3
+ * [symfony/console][15]: ^6.4.31|^7.4.3|^8.0.3
  * [symfony/var-exporter][16]: ^6.4.26|^7.4.0
 
 ## Suggested
