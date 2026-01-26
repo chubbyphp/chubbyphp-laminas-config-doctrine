@@ -48,6 +48,8 @@ final class ChainAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ChainAdapter::class, $service);
+
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testInvoke(): void
@@ -78,6 +80,8 @@ final class ChainAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ChainAdapter::class, $service);
+
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testCallStatic(): void
@@ -110,5 +114,22 @@ final class ChainAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ChainAdapter::class, $service);
+
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+    }
+
+    private static function getPrivateProperty(object $object, string $property): mixed
+    {
+        $class = new \ReflectionClass($object);
+        while ($class) {
+            if ($class->hasProperty($property)) {
+                $prop = $class->getProperty($property);
+
+                return $prop->getValue($object);
+            }
+            $class = $class->getParentClass();
+        }
+
+        throw new \ReflectionException(\sprintf('Property %s does not exist', $property));
     }
 }

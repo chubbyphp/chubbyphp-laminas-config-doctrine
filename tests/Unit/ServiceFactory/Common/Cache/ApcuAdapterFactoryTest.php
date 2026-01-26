@@ -33,6 +33,9 @@ final class ApcuAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ApcuAdapter::class, $service);
+
+        self::assertSame('', self::getPrivateProperty($service, 'namespace'));
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testInvokeWithEmptyConfig(): void
@@ -55,6 +58,9 @@ final class ApcuAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ApcuAdapter::class, $service);
+
+        self::assertSame('', self::getPrivateProperty($service, 'namespace'));
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testInvoke(): void
@@ -87,6 +93,9 @@ final class ApcuAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ApcuAdapter::class, $service);
+
+        self::assertSame('some_namespace:', self::getPrivateProperty($service, 'namespace'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testCallStatic(): void
@@ -121,5 +130,23 @@ final class ApcuAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ApcuAdapter::class, $service);
+
+        self::assertSame('some_namespace:', self::getPrivateProperty($service, 'namespace'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+    }
+
+    private static function getPrivateProperty(object $object, string $property): mixed
+    {
+        $class = new \ReflectionClass($object);
+        while ($class) {
+            if ($class->hasProperty($property)) {
+                $prop = $class->getProperty($property);
+
+                return $prop->getValue($object);
+            }
+            $class = $class->getParentClass();
+        }
+
+        throw new \ReflectionException(\sprintf('Property %s does not exist', $property));
     }
 }

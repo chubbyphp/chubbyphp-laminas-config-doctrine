@@ -13,6 +13,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputArgument;
@@ -177,5 +178,57 @@ final class DocumentManagerCommandTest extends TestCase
 
         $documentManagerCommand = new DocumentManagerCommand($command, $container);
         $documentManagerCommand->run($input, $output);
+    }
+
+    public function testRunWithApplication(): void
+    {
+        $input = new ArrayInput([]);
+
+        $output = new BufferedOutput();
+
+        $builder = new MockObjectBuilder();
+
+        /** @var DocumentManager $documentManager */
+        $documentManager = $builder->create(DocumentManager::class, []);
+
+        $innerCommandApplication = null;
+
+        $command = new class($documentManager, $innerCommandApplication) extends Command {
+            /**
+             * @param null|Application $innerCommandApplication
+             */
+            public function __construct(private DocumentManager $documentManager, private &$innerCommandApplication)
+            {
+                parent::__construct();
+            }
+
+            protected function configure(): void
+            {
+                $this
+                    ->setName('command:name')
+                ;
+            }
+
+            protected function execute(InputInterface $input, OutputInterface $output): int
+            {
+                $this->innerCommandApplication = $this->getApplication();
+
+                return 0;
+            }
+        };
+
+        /** @var ContainerInterface $container */
+        $container = $builder->create(ContainerInterface::class, [
+            new WithReturn('get', [DocumentManager::class], $documentManager),
+        ]);
+
+        $application = new Application();
+
+        $documentManagerCommand = new DocumentManagerCommand($command, $container);
+        $application->addCommand($documentManagerCommand);
+
+        $documentManagerCommand->run($input, $output);
+
+        self::assertSame($application, $innerCommandApplication);
     }
 }

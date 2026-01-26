@@ -32,6 +32,11 @@ final class ArrayAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ArrayAdapter::class, $service);
+
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertTrue(self::getPrivateProperty($service, 'storeSerialized'));
+        self::assertSame(0.0, self::getPrivateProperty($service, 'maxLifetime'));
+        self::assertSame(0, self::getPrivateProperty($service, 'maxItems'));
     }
 
     public function testInvoke(): void
@@ -59,6 +64,11 @@ final class ArrayAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ArrayAdapter::class, $service);
+
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertFalse(self::getPrivateProperty($service, 'storeSerialized'));
+        self::assertSame(600.0, self::getPrivateProperty($service, 'maxLifetime'));
+        self::assertSame(20, self::getPrivateProperty($service, 'maxItems'));
     }
 
     public function testCallStatic(): void
@@ -88,5 +98,17 @@ final class ArrayAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(ArrayAdapter::class, $service);
+
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertFalse(self::getPrivateProperty($service, 'storeSerialized'));
+        self::assertSame(600.0, self::getPrivateProperty($service, 'maxLifetime'));
+        self::assertSame(20, self::getPrivateProperty($service, 'maxItems'));
+    }
+
+    private static function getPrivateProperty(object $object, string $property): mixed
+    {
+        $reflection = new \ReflectionProperty($object, $property);
+
+        return $reflection->getValue($object);
     }
 }

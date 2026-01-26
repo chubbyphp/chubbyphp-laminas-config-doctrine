@@ -32,6 +32,11 @@ final class PhpFilesAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(PhpFilesAdapter::class, $service);
+
+        // PhpFilesAdapter embeds namespace in the directory path, not in the namespace property
+        self::assertStringNotContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertFalse(self::getPrivateProperty($service, 'appendOnly'));
     }
 
     public function testInvoke(): void
@@ -59,6 +64,11 @@ final class PhpFilesAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(PhpFilesAdapter::class, $service);
+
+        // PhpFilesAdapter embeds namespace in the directory path
+        self::assertStringContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertTrue(self::getPrivateProperty($service, 'appendOnly'));
     }
 
     public function testCallStatic(): void
@@ -88,5 +98,25 @@ final class PhpFilesAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(PhpFilesAdapter::class, $service);
+
+        // PhpFilesAdapter embeds namespace in the directory path
+        self::assertStringContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+        self::assertTrue(self::getPrivateProperty($service, 'appendOnly'));
+    }
+
+    private static function getPrivateProperty(object $object, string $property): mixed
+    {
+        $class = new \ReflectionClass($object);
+        while ($class) {
+            if ($class->hasProperty($property)) {
+                $prop = $class->getProperty($property);
+
+                return $prop->getValue($object);
+            }
+            $class = $class->getParentClass();
+        }
+
+        throw new \ReflectionException(\sprintf('Property %s does not exist', $property));
     }
 }

@@ -33,6 +33,10 @@ final class FilesystemAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(FilesystemAdapter::class, $service);
+
+        // FilesystemAdapter embeds namespace in the directory path, not in the namespace property
+        self::assertStringNotContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(0, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testInvoke(): void
@@ -65,6 +69,10 @@ final class FilesystemAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(FilesystemAdapter::class, $service);
+
+        // FilesystemAdapter embeds namespace in the directory path
+        self::assertStringContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
     }
 
     public function testCallStatic(): void
@@ -99,5 +107,24 @@ final class FilesystemAdapterFactoryTest extends TestCase
         $service = $factory($container);
 
         self::assertInstanceOf(FilesystemAdapter::class, $service);
+
+        // FilesystemAdapter embeds namespace in the directory path
+        self::assertStringContainsString('some_namespace', self::getPrivateProperty($service, 'directory'));
+        self::assertSame(120, self::getPrivateProperty($service, 'defaultLifetime'));
+    }
+
+    private static function getPrivateProperty(object $object, string $property): mixed
+    {
+        $class = new \ReflectionClass($object);
+        while ($class) {
+            if ($class->hasProperty($property)) {
+                $prop = $class->getProperty($property);
+
+                return $prop->getValue($object);
+            }
+            $class = $class->getParentClass();
+        }
+
+        throw new \ReflectionException(\sprintf('Property %s does not exist', $property));
     }
 }
