@@ -26,7 +26,7 @@ final class ConfigurationFactory extends AbstractFactory
 
         $config = $this->resolveConfig($configurationConfig);
 
-        /** @var array<int, array{name: string, className: class-string, parameters: array<string, mixed>}> $filters */
+        /** @var list<array{name: string, className: class-string, parameters: array<string, mixed>}> $filters */
         $filters = $this->resolveValue($container, $config['filters'] ?? []);
 
         unset($config['filters']);
@@ -40,7 +40,7 @@ final class ConfigurationFactory extends AbstractFactory
     }
 
     /**
-     * @param array<int, array{name: string, className: class-string, parameters: array<string, mixed>}> $filters
+     * @param list<array{name: string, className: class-string, parameters: array<string, mixed>}> $filters
      */
     private function callAdders(Configuration $configuration, array $filters): void
     {

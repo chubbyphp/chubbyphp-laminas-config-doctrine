@@ -27,7 +27,7 @@ final class PHPDriverFactory extends AbstractFactory
 
         $config = $this->resolveConfig($phpDriver);
 
-        /** @var array<int, string>|FileLocator|string $locator */
+        /** @var FileLocator|list<string>|string $locator */
         $locator = $this->resolveValue($container, $config['locator'] ?? []);
 
         unset($config['locator']);

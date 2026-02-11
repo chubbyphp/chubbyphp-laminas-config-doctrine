@@ -26,7 +26,7 @@ final class StaticPHPDriverFactory extends AbstractFactory
 
         $config = $this->resolveConfig($staticPhpDriver);
 
-        /** @var array<int, string>|string $paths */
+        /** @var list<string>|string $paths */
         $paths = $this->resolveValue($container, $config['paths'] ?? []);
 
         unset($config['paths']);
