@@ -34,27 +34,27 @@ and the possiblity to install only the needed vendors make the difference to the
 ## Requirements
 
  * php: 8.3
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.2
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.3
  * [doctrine/common][11]: ^3.5
  * [doctrine/event-manager][12]: ^2.1.1
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^6.4.42|^7.4.14|^8.0.14
- * [symfony/console][15]: ^6.4.42|^7.4.14|^8.1.1
- * [symfony/var-exporter][16]: ^6.4.42|^7.4.14
+ * [symfony/cache][14]: ^6.4.45|^7.4.18|^8.1.6
+ * [symfony/console][15]: ^6.4.45|^7.4.18|^8.1.6
+ * [symfony/var-exporter][16]: ^6.4.45|^7.4.18
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^4.4.1
- * [doctrine/mongodb-odm][21]: ^2.15.1
- * [doctrine/orm][22]: ^3.5.8
- * [mongodb/mongodb][23]: 1.21.3|^2.1.2
+ * [doctrine/dbal][20]: ^4.4.4
+ * [doctrine/mongodb-odm][21]: ^2.17.1
+ * [doctrine/orm][22]: ^3.6.8
+ * [mongodb/mongodb][23]: ^1.21.4|^2.2.0
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1.3"
 ```
 
 ## Usage
