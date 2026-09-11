@@ -1,5 +1,13 @@
 # DocumentManagers
 
+Two Doctrine MongoDB ODM document managers, `read` and `write`, each with its own MongoDB client, cache and mapping
+driver.
+
+Every factory in this package accepts a name. Register it as `[Factory::class, 'read']` under the service name
+suffixed with that same name (`DocumentManager::class.'read'`), and nest the related configuration under a `read`
+key. A named factory resolves its dependencies with the same suffix, so the `read` document manager uses the `read`
+client, the `read` cache and the `read` mapping driver. Any number of names can be used.
+
 ```php
 <?php
 
@@ -7,9 +15,9 @@ declare(strict_types=1);
 
 use Chubbyphp\Laminas\Config\Config;
 use Chubbyphp\Laminas\Config\ContainerFactory;
+use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Common\Cache\ArrayAdapterFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\ODM\MongoDB\DocumentManagerFactory;
 use Chubbyphp\Laminas\Config\Doctrine\ServiceFactory\Persistence\Mapping\Driver\ClassMapDriverFactory;
-use Chubbyphp\Laminas\Config\Symfony\Component\Cache\Adapter\ArrayAdapterFactory;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use Doctrine\Persistence\Mapping\Driver\MappingDriver;
 use MyProject\Mapping\MongodbOdm\SampleMapping;
@@ -28,6 +36,16 @@ $config = [
         ],
     ],
     'doctrine' => [
+        'cache' => [
+            'array' => [
+                'read' => [
+                    'namespace' => 'doctrine-read',
+                ],
+                'write' => [
+                    'namespace' => 'doctrine-write',
+                ],
+            ],
+        ],
         'driver' => [
             'classMap' => [
                 'read' => [
@@ -70,8 +88,8 @@ $config = [
                     'defaultDB' => 'sample_read',
                     'hydratorDir' => '/tmp/doctrine/mongodbOdm/hydrators',
                     'hydratorNamespace' => 'DoctrineMongoDBODMHydrators',
-                    'metadataCache' => CacheItemPoolInterface::class.'write',
-                    'metadataDriverImpl' => MappingDriver::class.'write',
+                    'metadataCache' => CacheItemPoolInterface::class.'read',
+                    'metadataDriverImpl' => MappingDriver::class.'read',
                     'proxyDir' => '/tmp/doctrine/mongodbOdm/proxies',
                     'proxyNamespace' => 'DoctrineMongoDBODMProxy',
                 ],
@@ -87,18 +105,6 @@ $config = [
             ],
         ],
     ],
-    'symfony' => [
-        'cache' => [
-            'array' => [
-                'read' => [
-                    'namespace' => 'doctrine-read',
-                ],
-                'write' => [
-                    'namespace' => 'doctrine-write',
-                ],
-            ],
-        ],
-    ]
 ];
 
 $factory = new ContainerFactory();
@@ -108,6 +114,8 @@ $container = $factory(new Config($config));
 /** @var DocumentManager $documentManagerRead */
 $documentManagerRead = $container->get(DocumentManager::class.'read');
 
-/** @var DocumentManager $documentManagerRead */
-$documentManagerRead = $container->get(DocumentManager::class.'write');
+/** @var DocumentManager $documentManagerWrite */
+$documentManagerWrite = $container->get(DocumentManager::class.'write');
 ```
+
+The Doctrine console commands select an instance with `--dm=read` or `--dm=write`.

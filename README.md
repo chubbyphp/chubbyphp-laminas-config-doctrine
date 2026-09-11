@@ -21,19 +21,32 @@
 
 ## Description
 
-Doctrine service factories for the [laminas/laminas-servicemanager][2] and any other dependency injection container
-who's been able to handle it's config, like [chubbyphp/chubbyphp-container][3] via [chubbyphp/chubbyphp-laminas-config][4]
-and many (Aura.Di, Pimple, Auryn, Symfony, PHP-DI) more.
+Service factories that wire Doctrine (DBAL, ORM and MongoDB ODM) into a PSR-11 container from plain array
+configuration. They follow the [laminas/laminas-servicemanager][2] `dependencies` convention, so they work with
+[chubbyphp/chubbyphp-container][3] through [chubbyphp/chubbyphp-laminas-config][4], with Mezzio, and with any other
+container that understands the same configuration format (Aura.Di, Pimple, Auryn, Symfony, PHP-DI, ...).
 
-The original concept of this service factories is by [@DASPRiD][5] used in [dasprid/container-interop-doctrine][6]
-which was handed over to [roave/psr-container-doctrine][7].
+What you get:
 
-Small adjustments like using class names instead `doctrine.something...` strings as service names
-and the possiblity to install only the needed vendors make the difference to the original project.
+ * Factories for the DBAL `Connection`, the ORM `EntityManager`, the MongoDB `Client` and the ODM `DocumentManager`,
+   plus their `Configuration` and `EventManager` objects.
+ * Factories for the Symfony cache adapters Doctrine uses for metadata, query and result caching
+   (array, APCu, chain, filesystem, memcached, PHP files, redis).
+ * A `ClassMapDriver` that lets you write mappings as small PHP classes instead of attributes, XML or YAML.
+ * Factories for the Doctrine console commands (schema tool, cache clearing, proxies, hydrators, ...) and
+   `dbal:database:create` / `dbal:database:drop` commands.
+ * Support for multiple named connections, entity managers and document managers (for example `read` and `write`)
+   from the same set of factories.
+
+Services are registered under their class name (for example `EntityManagerInterface::class`) rather than under
+`doctrine.something` string keys, and only the Doctrine packages you actually use have to be installed.
+
+The concept is based on [dasprid/container-interop-doctrine][6] by [@DASPRiD][5], now maintained as
+[roave/psr-container-doctrine][7].
 
 ## Requirements
 
- * php: 8.3
+ * php: ^8.3
  * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.3
  * [doctrine/common][11]: ^3.5
  * [doctrine/event-manager][12]: ^2.1.1
@@ -44,10 +57,10 @@ and the possiblity to install only the needed vendors make the difference to the
 
 ## Suggested
 
- * [doctrine/dbal][20]: ^4.4.4
- * [doctrine/mongodb-odm][21]: ^2.17.1
- * [doctrine/orm][22]: ^3.6.8
- * [mongodb/mongodb][23]: ^1.21.4|^2.2.0
+Install only what you need:
+
+ * For the ORM: [doctrine/dbal][20]: ^4.4.4 and [doctrine/orm][22]: ^3.6.8
+ * For the MongoDB ODM: [doctrine/mongodb-odm][21]: ^2.17.1 and [mongodb/mongodb][23]: ^1.21.4|^2.2.0
 
 ## Installation
 
@@ -57,7 +70,56 @@ Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-confi
 composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1.3"
 ```
 
+Then add the Doctrine packages for the storage you use:
+
+```sh
+# ORM
+composer require doctrine/dbal doctrine/orm
+
+# MongoDB ODM
+composer require doctrine/mongodb-odm mongodb/mongodb
+```
+
 ## Usage
+
+Each factory reads its options from the `doctrine` section of the container configuration and only needs the
+`dependencies.factories` entry to be registered. A minimal ORM setup looks like this:
+
+```php
+'dependencies' => [
+    'factories' => [
+        CacheItemPoolInterface::class => ArrayAdapterFactory::class,
+        EntityManagerInterface::class => EntityManagerFactory::class,
+        MappingDriver::class => ClassMapDriverFactory::class,
+    ],
+],
+'doctrine' => [
+    'cache' => ['array' => ['namespace' => 'doctrine']],
+    'dbal' => ['connection' => ['driver' => 'pdo_pgsql', 'host' => 'localhost', 'dbname' => 'sample', /* ... */]],
+    'driver' => ['classMap' => ['map' => [Sample::class => SampleMapping::class]]],
+    'orm' => [
+        'configuration' => [
+            'metadataCache' => CacheItemPoolInterface::class,
+            'metadataDriverImpl' => MappingDriver::class,
+            'proxyDir' => '/tmp/doctrine/orm/proxies',
+            'proxyNamespace' => 'DoctrineORMProxy',
+        ],
+    ],
+],
+```
+
+Good to know:
+
+ * **Configuration values are resolved through the container.** Any string value that matches a registered service
+   name is replaced by that service, so `'metadataCache' => CacheItemPoolInterface::class` injects the configured
+   cache adapter. Keys under `configuration` map to setters on the Doctrine `Configuration` object
+   (`proxyDir` calls `setProxyDir()`), so every option Doctrine offers is available.
+ * **Dependencies are resolved lazily.** The `EntityManagerFactory` looks up `Connection::class`,
+   `Configuration::class` and `EventManager::class` in the container. If they are not registered, it builds them
+   with the matching factory from this package, so you only register what you want to access directly.
+ * **Multiple instances share the same factories.** Register a factory as `[EntityManagerFactory::class, 'read']`
+   under the service name `EntityManagerInterface::class.'read'`, and nest the related configuration under a `read`
+   key. The factory then resolves all of its dependencies with the same `read` suffix.
 
 ### MongodbODM
 
@@ -68,6 +130,14 @@ composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1.3"
 
  * [Single connection][32]
  * [Multiple connection][33]
+
+### Console commands
+
+Register the command factories from `ServiceFactory\DBAL\Tools\Console\Command`,
+`ServiceFactory\ORM\Tools\Console\Command` and `ServiceFactory\ODM\MongoDB\Tools\Console\Command` and add the
+resulting commands to your Symfony console application. The commands pick the right instance by name:
+`--connection=<name>` for DBAL, `--em=<name>` for the ORM and `--dm=<name>` for the MongoDB ODM. Without the
+option the default (unsuffixed) service is used.
 
 ## Copyright
 

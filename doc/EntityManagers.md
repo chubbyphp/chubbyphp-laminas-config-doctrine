@@ -1,5 +1,12 @@
 # EntityManagers
 
+Two Doctrine ORM entity managers, `read` and `write`, each with its own DBAL connection, cache and mapping driver.
+
+Every factory in this package accepts a name. Register it as `[Factory::class, 'read']` under the service name
+suffixed with that same name (`EntityManagerInterface::class.'read'`), and nest the related configuration under a
+`read` key. A named factory resolves its dependencies with the same suffix, so the `read` entity manager uses the
+`read` connection, the `read` cache and the `read` mapping driver. Any number of names can be used.
+
 ```php
 <?php
 
@@ -92,3 +99,6 @@ $entityManagerRead = $container->get(EntityManagerInterface::class.'read');
 /** @var EntityManagerInterface $entityManagerWrite */
 $entityManagerWrite = $container->get(EntityManagerInterface::class.'write');
 ```
+
+The Doctrine console commands select an instance with `--em=read` or `--em=write`
+(`--connection=<name>` for the DBAL commands).
