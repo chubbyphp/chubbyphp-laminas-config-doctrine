@@ -60,14 +60,14 @@ The concept is based on [dasprid/container-interop-doctrine][6] by [@DASPRiD][5]
 Install only what you need:
 
  * For the ORM: [doctrine/dbal][20]: ^4.4.4 and [doctrine/orm][22]: ^3.6.8
- * For the MongoDB ODM: [doctrine/mongodb-odm][21]: ^2.17.1 and [mongodb/mongodb][23]: ^1.21.4|^2.2.0
+ * For the MongoDB ODM: [doctrine/mongodb-odm][21]: ^2.17.1 and [mongodb/mongodb][23]: ^2.2.0 (ext-mongodb: ^2.2)
 
 ## Installation
 
 Through [Composer](http://getcomposer.org) as [chubbyphp/chubbyphp-laminas-config-doctrine][1].
 
 ```sh
-composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.1.3"
+composer require chubbyphp/chubbyphp-laminas-config-doctrine "^3.2.0"
 ```
 
 Then add the Doctrine packages for the storage you use:

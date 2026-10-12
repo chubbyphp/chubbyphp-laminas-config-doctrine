@@ -32,6 +32,7 @@
         "symfony/var-exporter": "^6.4.45|^7.4.18"
     },
     "require-dev": {
+        "ext-mongodb": "^2.2",
         "chubbyphp/chubbyphp-dev-helper": "dev-master",
         "chubbyphp/chubbyphp-laminas-config": "^1.5.3",
         "chubbyphp/chubbyphp-mock": "^2.2.2",
@@ -40,7 +41,7 @@
         "doctrine/mongodb-odm": "^2.17.1",
         "doctrine/orm": "^3.6.8",
         "infection/infection": "^0.35.4",
-        "mongodb/mongodb": "^1.21.4|^2.2.0",
+        "mongodb/mongodb": "^2.2.0",
         "php-coveralls/php-coveralls": "^2.9.1",
         "phpstan/extension-installer": "^1.4.3",
         "phpstan/phpstan": "^2.2.13",
@@ -48,10 +49,11 @@
         "ramsey/uuid": "^4.9.3"
     },
     "conflict": {
+        "ext-mongodb": "<2.2",
         "doctrine/dbal": "<4.4.1 || >=5.0",
         "doctrine/mongodb-odm": "<2.15.3 || >=3.0",
         "doctrine/orm": "<3.6.1 || >=4.0",
-        "mongodb/mongodb": "<1.21.3 || >=2.0 <2.1.2 || >=3.0"
+        "mongodb/mongodb": "<2.2.0 || >=3.0"
     },
     "autoload": {
         "psr-4": {
@@ -72,7 +74,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "3.1-dev"
+            "dev-master": "3.2-dev"
         }
     },
     "scripts": {

@@ -8,6 +8,32 @@ use Chubbyphp\Laminas\Config\Factory\AbstractFactory;
 use MongoDB\Client;
 use Psr\Container\ContainerInterface;
 
+/**
+ * @phpstan-type UriOptions array{
+ *     readPreference?: string,
+ *     readConcernLevel?: string,
+ *     w?: int|string,
+ *     wtimeoutMS?: int,
+ *     journal?: bool,
+ *     retryWrites?: bool,
+ *     retryReads?: bool,
+ *     ssl?: bool,
+ *     tls?: bool,
+ *     authSource?: string,
+ *     authMechanism?: string,
+ *     replicaSet?: string,
+ *     appname?: string,
+ *     loadBalanced?: bool,
+ *     directConnection?: bool,
+ *     serverSelectionTimeoutMS?: int,
+ *     maxPoolSize?: int,
+ *     minPoolSize?: int,
+ * }
+ * @phpstan-type DriverOptions array{
+ *     typeMap?: array<string, mixed>,
+ *     driver?: array{name?: string, version?: string, platform?: string},
+ * }
+ */
 final class ClientFactory extends AbstractFactory
 {
     public function __invoke(ContainerInterface $container): Client
@@ -30,10 +56,10 @@ final class ClientFactory extends AbstractFactory
         /** @var null|string $uri */
         $uri = $this->resolveValue($container, $config['uri'] ?? 'mongodb://127.0.0.1/');
 
-        /** @var array<string, mixed> $uriOptions */
+        /** @var UriOptions $uriOptions */
         $uriOptions = $this->resolveValue($container, $config['uriOptions'] ?? []);
 
-        /** @var array<string, mixed> $driverOptions */
+        /** @var DriverOptions $driverOptions */
         $driverOptions = $this->resolveValue($container, $config['driverOptions'] ?? []);
 
         unset($config['uri'], $config['uriOptions'], $config['driverOptions']);
