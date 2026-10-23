@@ -47,20 +47,20 @@ The concept is based on [dasprid/container-interop-doctrine][6] by [@DASPRiD][5]
 ## Requirements
 
  * php: ^8.3
- * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.3
+ * [chubbyphp/chubbyphp-laminas-config-factory][10]: ^1.5.5
  * [doctrine/common][11]: ^3.5
  * [doctrine/event-manager][12]: ^2.1.1
  * [psr/container][13]: ^1.1.2|^2.0.2
- * [symfony/cache][14]: ^6.4.45|^7.4.18|^8.1.6
- * [symfony/console][15]: ^6.4.45|^7.4.18|^8.1.6
+ * [symfony/cache][14]: ^6.4.47|^7.4.21|^8.1.9
+ * [symfony/console][15]: ^6.4.48|^7.4.21|^8.1.9
  * [symfony/var-exporter][16]: ^6.4.45|^7.4.18
 
 ## Suggested
 
 Install only what you need:
 
- * For the ORM: [doctrine/dbal][20]: ^4.4.4 and [doctrine/orm][22]: ^3.6.8
- * For the MongoDB ODM: [doctrine/mongodb-odm][21]: ^2.17.1 and [mongodb/mongodb][23]: ^2.2.0 (ext-mongodb: ^2.2)
+ * For the ORM: [doctrine/dbal][20]: ^4.5.0 and [doctrine/orm][22]: ^3.7.5
+ * For the MongoDB ODM: [doctrine/mongodb-odm][21]: ^2.17.3 and [mongodb/mongodb][23]: ^2.5.0 (ext-mongodb: ^2.5)
 
 ## Installation
 
